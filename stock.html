@@ -83,8 +83,9 @@
   .badge { padding:2px 10px; border-radius:3px; color:#fff; font-size:12px; white-space:nowrap; }
   .badge.in { background:#00a870; }
   .badge.out { background:#ff8f1f; }
-  .r-person { font-weight:600; }
+  .r-person { font-weight:500; }
   .r-field { color:#666; }
+  .r-time { color:#999; font-size:12.5px; }
   .r-amt { margin-left:auto; font-weight:700; }
   .r-amt.in { color:#00a870; }
   .r-amt.out { color:#ff8f1f; }
@@ -243,39 +244,39 @@ const supplies = [
   {
     id:1, name:"物资1", code:"物资1", type:"其他", spec:"5斤/瓶", unit:"瓶", price:7.5, stock:20, note:"", img:false,
     records:[
-      { type:"in", person:"张建国（库管员）", qty:50, price:7.5, time:"2026-07-02 09:30", note:"首批采购入库" },
-      { type:"out", person:"王强（员工）", qty:20, price:7.5, time:"2026-07-18 14:05", note:"夏管作业领用",
+      { type:"in", person:"张建国",category:"",qty:50, price:7.5, time:"2026-07-02", note:"首批采购入库" },
+      { type:"out", person:"王强", category:"播种",qty:20, price:7.5, time:"2026-07-18", note:"夏管作业领用",
         plots:[ {name:"于里北区-1号地块", crop:"小麦", mu:40}, {name:"于里北区-2号地块", crop:"玉米", mu:40} ] },
-      { type:"in", person:"张建国（库管员）", qty:30, price:7.5, time:"2026-08-10 10:20", note:"补充库存" },
-      { type:"out", person:"李伟（员工）", qty:40, price:7.5, time:"2026-08-28 16:40", note:"秋季播种前土壤处理",
+      { type:"in", person:"张建国", category:"",qty:30, price:7.5, time:"2026-08-10", note:"补充库存" },
+      { type:"out", person:"李伟", category:"播种",qty:40, price:7.5, time:"2026-08-28", note:"秋季播种前土壤处理",
         plots:[ {name:"东区-1号地块", crop:"小麦", mu:60}, {name:"东区-2号地块", crop:"小麦", mu:60}, {name:"东区-3号地块", crop:"玉米", mu:120} ] }
     ]
   },
   {
     id:2, name:"雨小麦", code:"nxm-001", type:"种子", spec:"20斤/袋", unit:"袋", price:66.67, stock:90, note:"", img:true,
     records:[
-      { type:"in", person:"张建国（库管员）", qty:120, price:66.67, time:"2026-06-15 08:50", note:"2026年秋播麦种采购" },
-      { type:"out", person:"陈涛（员工）", qty:15, price:66.67, time:"2026-09-01 09:15", note:"东区播种领种",
+      { type:"in", person:"张建国", category:"",qty:120, price:66.67, time:"2026-06-15", note:"2026年秋播麦种采购" },
+      { type:"out", person:"陈涛", category:"播种",qty:15, price:66.67, time:"2026-09-01", note:"东区播种领种",
         plots:[ {name:"东区-1号地块", crop:"小麦", mu:200}, {name:"东区-2号地块", crop:"小麦", mu:100} ] },
-      { type:"out", person:"刘洋（员工）", qty:12, price:66.67, time:"2026-09-05 15:30", note:"西区播种领种",
+      { type:"out", person:"刘洋", category:"播种",qty:12, price:66.67, time:"2026-09-05", note:"西区播种领种",
         plots:[ {name:"西区-试验田", crop:"玉米", mu:150}, {name:"西区-2号地块", crop:"玉米", mu:100}, {name:"北区-1号地块", crop:"小麦", mu:50} ] },
-      { type:"out", person:"赵敏（员工）", qty:3, price:66.67, time:"2026-09-10 11:00", note:"南区育苗补种",
+      { type:"out", person:"赵敏",category:"播种", qty:3, price:66.67, time:"2026-09-10", note:"南区育苗补种",
         plots:[ {name:"南区-育苗田", crop:"玉米", mu:90} ] }
     ]
   },
   {
-    id:3, name:"旋耕犁地", code:"HGRF333", type:"其他", spec:"1个/辆", unit:"辆", price:200, stock:794, note:"农资备注地方", img:false,
+    id:3, name:"尿素", code:"HGRF333", type:"其他", spec:"1个/辆", unit:"辆", price:200, stock:794, note:"农资备注地方", img:false,
     records:[
-      { type:"in", person:"马萌（库管员）", qty:800, price:200, time:"2026-05-20 14:00", note:"旋耕犁配件批量入库" },
-      { type:"out", person:"王强（员工）", qty:6, price:200, time:"2026-08-15 10:10", note:"耕地磨损更换",
+      { type:"in", person:"马萌", category:"",qty:800, price:200, time:"2026-05-20", note:"旋耕犁配件批量入库" },
+      { type:"out", person:"王强",category:"播种", qty:6, price:200, time:"2026-08-15", note:"耕地磨损更换",
         plots:[ {name:"东区-1号地块", crop:"小麦", mu:120}, {name:"西区-试验田", crop:"玉米", mu:120}, {name:"南区-育苗田", crop:"玉米", mu:120} ] }
     ]
   },
   {
     id:4, name:"济麦-22", code:"JM-22", type:"种子", spec:"20kg/袋", unit:"袋", price:50.76, stock:150, note:"", img:true,
     records:[
-      { type:"in", person:"张建国（库管员）", qty:200, price:50.76, time:"2026-06-18 09:40", note:"济麦-22良种采购" },
-      { type:"out", person:"陈涛（员工）", qty:50, price:50.76, time:"2026-09-08 13:20", note:"大田播种领种",
+      { type:"in", person:"张建国",category:"", qty:200, price:50.76, time:"2026-06-18", note:"济麦-22良种采购" },
+      { type:"out", person:"陈涛",category:"播种", qty:50, price:50.76, time:"2026-09-08", note:"大田播种领种",
         plots:[ {name:"东区-2号地块", crop:"小麦", mu:400}, {name:"北区-1号地块", crop:"小麦", mu:100} ] }
     ]
   }
@@ -447,12 +448,13 @@ function renderDrawer(){
       <div class="record-head">
         <span class="r-arrow">▶</span>
         <span class="badge ${r.type}">${r.type==="in"?"入库":"支取"}</span>
-        <span class="r-person">${r.person}</span>
+        <span class="r-person">${r.person}${r.category?` - ${r.category}`:''}</span>
+        <span class="r-time">🕐 ${r.time||"—"}</span>
         <span class="r-field">${fmt(r.qty)} ${s.unit} × ${fmt(r.price)}元/${s.unit}</span>
         <span class="r-amt ${r.type}">${r.type==="in"?"+":"-"}¥ ${fmt(r.qty*r.price)}</span>
       </div>
       <div class="record-body">
-        <div class="record-meta">时间：${r.time} ｜ 备注：${r.note||"—"}</div>
+        <div class="record-meta">农事描述：${r.note||"—"}</div>
         ${plotBlock}
       </div>
     </div>`;
