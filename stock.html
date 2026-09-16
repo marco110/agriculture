@@ -137,7 +137,7 @@
 
 <div class="page-head">
   <h1>农资管理</h1>
-  <p>库管员录入农资 → 员工小程序支取（按地块）｜点击“出入库记录”查看每种物资的完整台账</p>
+  <p>库管员录入农资 → 员工小程序出库（按地块）｜点击“出入库记录”查看每种物资的完整台账</p>
 </div>
 
 <div class="container">
@@ -309,7 +309,7 @@ function show(id){ document.getElementById(id).style.display="flex"; }
 function recSum(recs, type){ return recs.filter(r=>r.type===type).reduce((s,r)=>s+r.qty,0); }
 function recAmount(recs, type){ return recs.filter(r=>r.type===type).reduce((s,r)=>s+r.qty*r.price,0); }
 
-/* 地块分摊：按亩数占比划分数量与金额（仅支取记录有地块，入库记录返回空数组） */
+/* 地块分摊：按亩数占比划分数量与金额（仅出库记录有地块，入库记录返回空数组） */
 function splitPlots(rec){
   const list = rec.plots || [];
   const totalMu = list.reduce((s,p)=>s+(+p.mu||0),0);
@@ -317,7 +317,7 @@ function splitPlots(rec){
   let assigned = 0;
   return list.map((p,i)=>{
     let qty;
-    if(i === list.length-1){ qty = +(rec.qty - assigned).toFixed(2); } // 末位兜底，保证合计=支取数
+    if(i === list.length-1){ qty = +(rec.qty - assigned).toFixed(2); } // 末位兜底，保证合计=出库数
     else { qty = +(rec.qty * p.mu/totalMu).toFixed(2); assigned = +(assigned+qty).toFixed(2); }
     return { ...p, ratio:(p.mu/totalMu*100), qty, amount:qty*rec.price };
   });
@@ -336,9 +336,9 @@ function renderPlatformStats(){
   document.getElementById("platformStats").innerHTML = `
     <div class="stat-card"><div class="label">农资品类</div><div class="value blue">${supplies.length} <span style="font-size:13px;color:#999;font-weight:400">种</span></div></div>
     <div class="stat-card"><div class="label">累计入库次数</div><div class="value green">${cntIn} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
-    <div class="stat-card"><div class="label">累计支取次数</div><div class="value orange">${cntOut} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
+    <div class="stat-card"><div class="label">累计出库次数</div><div class="value orange">${cntOut} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
     <div class="stat-card"><div class="label">累计入库金额</div><div class="value green">¥ ${fmt(amountIn)}</div></div>
-    <div class="stat-card"><div class="label">累计支取金额</div><div class="value orange">¥ ${fmt(amountOut)}</div></div>
+    <div class="stat-card"><div class="label">累计出库金额</div><div class="value orange">¥ ${fmt(amountOut)}</div></div>
     <div class="stat-card"><div class="label">当前库存价值</div><div class="value blue">¥ ${fmt(stockVal)}</div></div>`;
 }
 
@@ -437,9 +437,9 @@ function renderDrawer(){
     `出入库明细`;
   document.getElementById("dStats").innerHTML = `
     <div class="d-stat"><div class="l">入库</div><div class="v" style="color:#00a870">${fmt(inQ)}${s.unit}</div></div>
-    <div class="d-stat"><div class="l">支取</div><div class="v" style="color:#ff8f1f">${fmt(outQ)}${s.unit}</div></div>
+    <div class="d-stat"><div class="l">出库</div><div class="v" style="color:#ff8f1f">${fmt(outQ)}${s.unit}</div></div>
     <div class="d-stat"><div class="l">入库金额</div><div class="v" style="color:#00a870">¥${fmt(recAmount(all,"in"))}</div></div>
-    <div class="d-stat"><div class="l">支取金额</div><div class="v" style="color:#ff8f1f">¥${fmt(recAmount(all,"out"))}</div></div>`;
+    <div class="d-stat"><div class="l">出库金额</div><div class="v" style="color:#ff8f1f">¥${fmt(recAmount(all,"out"))}</div></div>`;
   document.getElementById("dRecords").innerHTML = recs.length ? recs.map((r,i)=>{
     const plots = splitPlots(r);
     const plotRows = plots.map(p=>`
@@ -451,21 +451,21 @@ function renderDrawer(){
         <td style="font-weight:600">¥ ${fmt(p.amount)}</td>
       </tr>`).join("");
     const plotBlock = (r.type==="out" && plots.length) ? `
-      <div class="plot-title">支取地块分摊（共 ${plots.length} 个地块，超出可滚动查看）</div>
+      <div class="plot-title">出库地块分摊（共 ${plots.length} 个地块，超出可滚动查看）</div>
       <div class="plot-scroll">
         <table class="plot-table">
-          <thead><tr><th>地块名称（作物）</th><th>亩数</th><th>亩数占比</th><th>分摊支取数量</th><th>分摊支取金额</th></tr></thead>
+          <thead><tr><th>地块名称（作物）</th><th>亩数</th><th>亩数占比</th><th>分摊出库数量</th><th>分摊出库金额</th></tr></thead>
           <tbody>${plotRows}
             <tr class="sum"><td>合计</td><td>${fmt(plots.reduce((a,p)=>a+p.mu,0))} 亩</td><td>100%</td><td>${fmt(r.qty)} ${s.unit}</td><td>¥ ${fmt(r.qty*r.price)}</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="mu-note">＊ 分摊规则：各地块分摊数量 = 支取总数量 ×（该地块亩数 ÷ 所选地块总亩数），金额 = 分摊数量 × 单价 ${fmt(r.price)}元/${s.unit}</div>` : "";
+      <div class="mu-note">＊ 分摊规则：各地块分摊数量 = 出库总数量 ×（该地块亩数 ÷ 所选地块总亩数），金额 = 分摊数量 × 单价 ${fmt(r.price)}元/${s.unit}</div>` : "";
     return `
     <div class="record" onclick="this.classList.toggle('open')">
       <div class="record-head">
         <span class="r-arrow">▶</span>
-        <span class="badge ${r.type}">${r.type==="in"?"入库":"支取"}</span>
+        <span class="badge ${r.type}">${r.type==="in"?"入库":"出库"}</span>
         <span class="r-person">${r.person}${r.category?` - ${r.category}`:''}</span>
         <span class="r-time">🕐 ${r.time||"—"}</span>
         <span class="r-field">${fmt(r.qty)} ${s.unit} × ${fmt(r.price)}元/${s.unit}</span>
