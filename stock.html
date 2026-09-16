@@ -169,7 +169,7 @@
       <thead>
         <tr>
           <th>图片</th><th>名称</th><th>农资编码</th><th>农资类型</th><th>规格</th>
-          <th>单价(元)</th><th>入库量</th><th>出库量</th><th>库存量</th><th>备注</th><th>操作</th>
+          <th>单价(元)</th><th>库存量</th><th>备注</th><th>操作</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -371,8 +371,6 @@ function renderTable(){
       <td><span class="tag ${s.type==='种子'?'seed':'other'}">${s.type}</span></td>
       <td>${s.spec}</td>
       <td>${fmt(s.price)}元/${s.unit}</td>
-      <td style="font-weight:600;color:#00a870">${fmt(recSum(s.records,"in"))}${s.unit}</td>
-      <td style="font-weight:600;color:#ff8f1f">${fmt(recSum(s.records,"out"))}${s.unit}</td>
       <td style="font-weight:600;color:#2f7bff">${fmt(s.stock)}${s.unit}</td>
       <td>${s.note||'—'}</td>
       <td style="white-space:nowrap">
