@@ -192,7 +192,8 @@
     </div>
     <span class="close-x" onclick="closeDrawer()">✕</span>
   </div>
-  <div class="drawer-body">
+  <div class="drawer-body">	  
+    <div class="drawer-stats" id="dStats"></div>
   	<div class="drawer-filter">
       <label>日期：</label>
       <input type="date" id="dStart" style="width:150px">
@@ -202,8 +203,6 @@
       <button class="btn btn-plain" onclick="resetDate()">重置</button>
     </div>
 	
-    <div class="drawer-stats" id="dStats"></div>
-
     <div class="plot-title" id="dListTitle">出入库明细（按时间倒序，点击记录展开地块分摊）</div>
     <div id="dRecords"></div>
   </div>
