@@ -422,7 +422,7 @@ function renderDrawer(){
   const isDefault = curRange.start === yr.start && curRange.end === yr.end;
   
   document.getElementById("dListTitle").textContent =
-    `出入库明细（${curRange.start||"不限"} ~ ${curRange.end||"不限"}，按时间倒序，点击记录展开地块分摊）`;
+    `出入库明细`;
   document.getElementById("dStats").innerHTML = `
     <div class="d-stat"><div class="l">总入库</div><div class="v" style="color:#00a870">${fmt(inQ)}${s.unit}</div></div>
     <div class="d-stat"><div class="l">总支取</div><div class="v" style="color:#ff8f1f">${fmt(outQ)}${s.unit}</div></div>
@@ -443,11 +443,8 @@ function renderDrawer(){
       <div class="plot-title">支取地块分摊（按地块亩数占比划分）</div>
       <table class="plot-table">
         <thead><tr><th>地块名称（作物）</th><th>亩数</th><th>亩数占比</th><th>分摊支取数量</th><th>分摊支取金额</th></tr></thead>
-        <tbody>${plotRows}
-          <tr class="sum"><td>合计</td><td>${fmt(plots.reduce((a,p)=>a+p.mu,0))} 亩</td><td>100%</td><td>${fmt(r.qty)} ${s.unit}</td><td>¥ ${fmt(r.qty*r.price)}</td></tr>
-        </tbody>
+        <tbody>${plotRows}</tbody>
       </table>
-      <div class="mu-note">＊ 分摊规则：各地块分摊数量 = 支取总数量 ×（该地块亩数 ÷ 所选地块总亩数），金额 = 分摊数量 × 单价 ${fmt(r.price)}元/${s.unit}</div>` : "";
     return `
     <div class="record" onclick="this.classList.toggle('open')">
       <div class="record-head">
