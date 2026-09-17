@@ -9,8 +9,11 @@
   body { font-family:"Microsoft YaHei","PingFang SC",sans-serif; background:#f5f7f6; color:#333; font-size:14px; }
   /* 顶部栏 */
   .topbar { background:#fff; height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid #eee; }
-  .topbar .tab { display:flex; align-items:center; gap:8px; font-size:14px; }
-  .topbar .tab .dot { width:16px; height:16px; border-radius:3px; background:#00a870; display:inline-block; }
+  .topbar .nav { display:flex; align-items:center; gap:28px; height:100%; font-size:14px; }
+  .topbar .nav a { display:flex; align-items:center; gap:7px; height:100%; color:#666; text-decoration:none; border-bottom:2.5px solid transparent; padding:0 2px; cursor:pointer; }
+  .topbar .nav a:hover { color:#00a870; }
+  .topbar .nav a.active { color:#00a870; font-weight:600; border-bottom-color:#00a870; }
+  .topbar .nav .dot { width:16px; height:16px; border-radius:3px; background:#00a870; display:inline-block; flex-shrink:0; }
   .topbar .right { color:#555; font-size:13px; display:flex; align-items:center; gap:14px; }
   .topbar .right .avatar { width:26px; height:26px; border-radius:50%; background:#00a870; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:12px; }
   /* 页面标题区 */
@@ -41,7 +44,7 @@
   .btn-danger { background:#f56c6c; color:#fff; }
   /* 表格 */
   .table-wrap { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.05); overflow:auto; }
-  table { width:100%; border-collapse:collapse; min-width:1140px; }
+  table { width:100%; border-collapse:collapse; min-width:1000px; }
   th { background:#fafafa; color:#666; font-weight:600; text-align:left; padding:12px 14px; border-bottom:1px solid #ebeef5; white-space:nowrap; }
   td { padding:12px 14px; border-bottom:1px solid #f2f3f5; vertical-align:middle; }
   tr:last-child td { border-bottom:none; }
@@ -66,7 +69,7 @@
   .drawer-head .sub { color:#999; font-size:12px; margin-top:3px; }
   .close-x { cursor:pointer; color:#999; font-size:20px; line-height:1; }
   .close-x:hover { color:#333; }
-  .drawer-body { flex:1; overflow-y:auto; overflow-x:hidden; padding:16px 22px 30px; }
+  .drawer-body { flex:1; overflow-y:auto; padding:16px 22px 30px; }
   .drawer-filter { background:#fff; border:1px solid #eef0ef; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
   .drawer-filter label { color:#555; }
   .drawer-filter .tilde { color:#999; }
@@ -83,9 +86,8 @@
   .badge { padding:2px 10px; border-radius:3px; color:#fff; font-size:12px; white-space:nowrap; }
   .badge.in { background:#00a870; }
   .badge.out { background:#ff8f1f; }
-  .r-person { font-weight:500; }
+  .r-person { font-weight:600; }
   .r-field { color:#666; }
-  .r-time { color:#999; font-size:12.5px; }
   .r-amt { margin-left:auto; font-weight:700; }
   .r-amt.in { color:#00a870; }
   .r-amt.out { color:#ff8f1f; }
@@ -97,18 +99,10 @@
   /* 地块明细表 */
   .plot-title { font-size:13px; font-weight:600; color:#333; margin:10px 0 6px; display:flex; align-items:center; gap:6px; }
   .plot-title::before { content:""; width:3px; height:12px; background:#00a870; border-radius:2px; display:inline-block; }
-  /* 地块分摊表格：宽/高都可能超出，容器内双向滚动，表头与合计行吸顶/吸底 */
-  .plot-scroll { max-height: 300px; overflow: auto; border:1px solid #eef0ef; border-radius:6px; background:#fff; }
-  .plot-scroll::-webkit-scrollbar { width:8px; height:8px; }
-  .plot-scroll::-webkit-scrollbar-thumb { background:#d5dbd8; border-radius:4px; }
-  .plot-scroll::-webkit-scrollbar-thumb:hover { background:#bcc5c0; }
-  .plot-scroll::-webkit-scrollbar-track { background:#f5f7f6; }
-  .plot-table { width:100%; min-width:620px; border-collapse:separate; border-spacing:0; font-size:12.5px; }
-  .plot-table th { position:sticky; top:0; z-index:2; background:#f2f7f4; padding:8px 10px; font-weight:600; color:#556; white-space:nowrap; text-align:left; box-shadow:inset 0 -1px 0 #e3eae6; }
-  .plot-table td { padding:8px 10px; border-bottom:1px solid #f0f2f1; text-align:left; white-space:nowrap; }
-  .plot-table th:first-child, .plot-table td:first-child { min-width:180px; white-space:normal; }
-  .plot-table tbody tr:last-child td { border-bottom:none; }
-  .plot-table tr.sum td { position:sticky; bottom:0; z-index:2; background:#fbf6ef; font-weight:700; color:#b26a00; border-bottom:none; box-shadow:inset 0 1px 0 #efe3d2; }
+  .plot-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .plot-table th { background:#f2f7f4; padding:7px 10px; font-weight:600; color:#556; }
+  .plot-table td { padding:7px 10px; border-bottom:1px solid #f0f2f1; text-align:left; }
+  .plot-table tr.sum td { background:#fbf6ef; font-weight:700; color:#b26a00; border-bottom:none; }
   .crop-tag { display:inline-block; margin-left:6px; padding:1px 8px; border-radius:9px; background:#e8f7f1; color:#00a870; font-size:11.5px; font-weight:600; vertical-align:1px; }
   .mu-note { color:#999; font-size:12px; margin-top:6px; }
   /* 弹窗 */
@@ -131,13 +125,16 @@
 <body>
 
 <div class="topbar">
-  <div class="tab"><span class="dot"></span>农资管理</div>
-  <div class="right"><span>五莲于里农场</span><span class="avatar">马</span><span>马萌</span></div>
+  <nav class="nav">
+    <a class="active"><span class="dot"></span>农资管理</a>
+	<a href="planting_records.html"><span class="dot" style="background:#c9d6d0"></span>种植档案</a>
+  </nav>
+  <div class="right"><span>五莲于里农场</span><span class="avatar">X</span><span>XX</span></div>
 </div>
 
 <div class="page-head">
   <h1>农资管理</h1>
-  <p>库管员录入农资 → 员工小程序出库（按地块）｜点击“出入库记录”查看每种物资的完整台账</p>
+  <p>库管员录入农资 → 员工小程序支取（按地块）｜点击“出入库记录”查看每种物资的完整台账</p>
 </div>
 
 <div class="container">
@@ -192,9 +189,9 @@
     </div>
     <span class="close-x" onclick="closeDrawer()">✕</span>
   </div>
-  <div class="drawer-body">	  
+  <div class="drawer-body">
     <div class="drawer-stats" id="dStats"></div>
-  	<div class="drawer-filter">
+	<div class="drawer-filter">
       <label>日期：</label>
       <input type="date" id="dStart" style="width:150px">
       <span class="tilde">至</span>
@@ -202,7 +199,6 @@
       <button class="btn btn-primary" onclick="applyDate()">查询</button>
       <button class="btn btn-plain" onclick="resetDate()">重置</button>
     </div>
-	
     <div class="plot-title" id="dListTitle">出入库明细（按时间倒序，点击记录展开地块分摊）</div>
     <div id="dRecords"></div>
   </div>
@@ -253,47 +249,39 @@ const supplies = [
   {
     id:1, name:"物资1", code:"物资1", type:"其他", spec:"5斤/瓶", unit:"瓶", price:7.5, stock:20, note:"", img:false,
     records:[
-      { type:"in", person:"张建国",category:"",qty:50, price:7.5, time:"2026-07-02", note:"首批采购入库" },
-      { type:"out", person:"王强", category:"播种",qty:20, price:7.5, time:"2026-07-18", note:"夏管作业领用",
+      { type:"in", person:"张建国", qty:50, price:7.5, time:"2026-07-02 09:30", note:"首批采购入库" },
+      { type:"out", person:"王强", qty:20, price:7.5, time:"2026-07-18 14:05", note:"夏管作业领用",
         plots:[ {name:"于里北区-1号地块", crop:"小麦", mu:40}, {name:"于里北区-2号地块", crop:"玉米", mu:40} ] },
-      { type:"in", person:"张建国", category:"",qty:30, price:7.5, time:"2026-08-10", note:"补充库存" },
-      { type:"out", person:"李伟", category:"播种",qty:40, price:7.5, time:"2026-08-28", note:"秋季播种前土壤处理",
+      { type:"in", person:"张建国", qty:30, price:7.5, time:"2026-08-10 10:20", note:"补充库存" },
+      { type:"out", person:"李伟", qty:40, price:7.5, time:"2026-08-28 16:40", note:"秋季播种前土壤处理",
         plots:[ {name:"东区-1号地块", crop:"小麦", mu:60}, {name:"东区-2号地块", crop:"小麦", mu:60}, {name:"东区-3号地块", crop:"玉米", mu:120} ] }
     ]
   },
   {
-    id:2, name:"雨小麦", code:"nxm-001", type:"种子", spec:"20斤/袋", unit:"袋", price:66.67, stock:80, note:"", img:true,
+    id:2, name:"雨小麦", code:"nxm-001", type:"种子", spec:"20斤/袋", unit:"袋", price:66.67, stock:90, note:"", img:true,
     records:[
-      { type:"in", person:"张建国", category:"",qty:120, price:66.67, time:"2026-06-15", note:"2026年秋播麦种采购" },
-      { type:"out", person:"孙磊", category:"播种", qty:10, price:66.67, time:"2026-09-12", note:"多地块分散播种领种（10 个地块，用于演示地块分摊滚动）",
-        plots:[
-          {name:"东区-3号地块", crop:"玉米", mu:30}, {name:"东区-4号地块", crop:"玉米", mu:30},
-          {name:"东区-5号地块", crop:"小麦", mu:30}, {name:"东区-6号地块", crop:"小麦", mu:30},
-          {name:"南区-1号地块", crop:"玉米", mu:30}, {name:"南区-2号地块", crop:"玉米", mu:30},
-          {name:"南区-3号地块", crop:"小麦", mu:30}, {name:"北区-2号地块", crop:"小麦", mu:30},
-          {name:"北区-3号地块", crop:"玉米", mu:30}, {name:"西区-3号地块（东片长名称测试）", crop:"小麦", mu:30}
-        ] },
-      { type:"out", person:"陈涛", category:"播种",qty:15, price:66.67, time:"2026-09-01", note:"东区播种领种",
+      { type:"in", person:"张建国", qty:120, price:66.67, time:"2026-06-15 08:50", note:"2026年秋播麦种采购" },
+      { type:"out", person:"陈涛", qty:15, price:66.67, time:"2026-09-01 09:15", note:"东区播种领种",
         plots:[ {name:"东区-1号地块", crop:"小麦", mu:200}, {name:"东区-2号地块", crop:"小麦", mu:100} ] },
-      { type:"out", person:"刘洋", category:"播种",qty:12, price:66.67, time:"2026-09-05", note:"西区播种领种",
+      { type:"out", person:"刘洋", qty:12, price:66.67, time:"2026-09-05 15:30", note:"西区播种领种",
         plots:[ {name:"西区-试验田", crop:"玉米", mu:150}, {name:"西区-2号地块", crop:"玉米", mu:100}, {name:"北区-1号地块", crop:"小麦", mu:50} ] },
-      { type:"out", person:"赵敏",category:"播种", qty:3, price:66.67, time:"2026-09-10", note:"南区育苗补种",
+      { type:"out", person:"赵敏", qty:3, price:66.67, time:"2026-09-10 11:00", note:"南区育苗补种",
         plots:[ {name:"南区-育苗田", crop:"玉米", mu:90} ] }
     ]
   },
   {
-    id:3, name:"尿素", code:"HGRF333", type:"其他", spec:"1个/辆", unit:"辆", price:200, stock:794, note:"农资备注地方", img:false,
+    id:3, name:"旋耕犁地", code:"HGRF333", type:"其他", spec:"1个/辆", unit:"辆", price:200, stock:794, note:"农资备注地方", img:false,
     records:[
-      { type:"in", person:"马萌", category:"",qty:800, price:200, time:"2026-05-20", note:"旋耕犁配件批量入库" },
-      { type:"out", person:"王强",category:"播种", qty:6, price:200, time:"2026-08-15", note:"耕地磨损更换",
+      { type:"in", person:"马萌", qty:800, price:200, time:"2026-05-20 14:00", note:"旋耕犁配件批量入库" },
+      { type:"out", person:"王强", qty:6, price:200, time:"2026-08-15 10:10", note:"耕地磨损更换",
         plots:[ {name:"东区-1号地块", crop:"小麦", mu:120}, {name:"西区-试验田", crop:"玉米", mu:120}, {name:"南区-育苗田", crop:"玉米", mu:120} ] }
     ]
   },
   {
     id:4, name:"济麦-22", code:"JM-22", type:"种子", spec:"20kg/袋", unit:"袋", price:50.76, stock:150, note:"", img:true,
     records:[
-      { type:"in", person:"张建国",category:"", qty:200, price:50.76, time:"2026-06-18", note:"济麦-22良种采购" },
-      { type:"out", person:"陈涛",category:"播种", qty:50, price:50.76, time:"2026-09-08", note:"大田播种领种",
+      { type:"in", person:"张建国", qty:200, price:50.76, time:"2026-06-18 09:40", note:"济麦-22良种采购" },
+      { type:"out", person:"陈涛", qty:50, price:50.76, time:"2026-09-08 13:20", note:"大田播种领种",
         plots:[ {name:"东区-2号地块", crop:"小麦", mu:400}, {name:"北区-1号地块", crop:"小麦", mu:100} ] }
     ]
   }
@@ -309,7 +297,7 @@ function show(id){ document.getElementById(id).style.display="flex"; }
 function recSum(recs, type){ return recs.filter(r=>r.type===type).reduce((s,r)=>s+r.qty,0); }
 function recAmount(recs, type){ return recs.filter(r=>r.type===type).reduce((s,r)=>s+r.qty*r.price,0); }
 
-/* 地块分摊：按亩数占比划分数量与金额（仅出库记录有地块，入库记录返回空数组） */
+/* 地块分摊：按亩数占比划分数量与金额（仅支取记录有地块，入库记录返回空数组） */
 function splitPlots(rec){
   const list = rec.plots || [];
   const totalMu = list.reduce((s,p)=>s+(+p.mu||0),0);
@@ -317,7 +305,7 @@ function splitPlots(rec){
   let assigned = 0;
   return list.map((p,i)=>{
     let qty;
-    if(i === list.length-1){ qty = +(rec.qty - assigned).toFixed(2); } // 末位兜底，保证合计=出库数
+    if(i === list.length-1){ qty = +(rec.qty - assigned).toFixed(2); } // 末位兜底，保证合计=支取数
     else { qty = +(rec.qty * p.mu/totalMu).toFixed(2); assigned = +(assigned+qty).toFixed(2); }
     return { ...p, ratio:(p.mu/totalMu*100), qty, amount:qty*rec.price };
   });
@@ -336,9 +324,9 @@ function renderPlatformStats(){
   document.getElementById("platformStats").innerHTML = `
     <div class="stat-card"><div class="label">农资品类</div><div class="value blue">${supplies.length} <span style="font-size:13px;color:#999;font-weight:400">种</span></div></div>
     <div class="stat-card"><div class="label">累计入库次数</div><div class="value green">${cntIn} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
-    <div class="stat-card"><div class="label">累计出库次数</div><div class="value orange">${cntOut} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
+    <div class="stat-card"><div class="label">累计支取次数</div><div class="value orange">${cntOut} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
     <div class="stat-card"><div class="label">累计入库金额</div><div class="value green">¥ ${fmt(amountIn)}</div></div>
-    <div class="stat-card"><div class="label">累计出库金额</div><div class="value orange">¥ ${fmt(amountOut)}</div></div>
+    <div class="stat-card"><div class="label">累计支取金额</div><div class="value orange">¥ ${fmt(amountOut)}</div></div>
     <div class="stat-card"><div class="label">当前库存价值</div><div class="value blue">¥ ${fmt(stockVal)}</div></div>`;
 }
 
@@ -370,7 +358,7 @@ function renderTable(){
       <td><span class="tag ${s.type==='种子'?'seed':'other'}">${s.type}</span></td>
       <td>${s.spec}</td>
       <td>${fmt(s.price)}元/${s.unit}</td>
-      <td style="font-weight:600;color:#2f7bff">${fmt(s.stock)}${s.unit}</td>
+      <td style="font-weight:600;color:#00a870">${fmt(s.stock)}${s.unit}</td>
       <td>${s.note||'—'}</td>
       <td style="white-space:nowrap">
         <span class="op-link" onclick="openDrawer(${s.id})">出入库记录</span>
@@ -379,7 +367,7 @@ function renderTable(){
         <span class="op-link danger" onclick="delSupply(${s.id})">删除</span>
       </td>
     </tr>`).join("")
-    : `<tr><td colspan="11" style="text-align:center;color:#999;padding:40px">暂无数据</td></tr>`;
+    : `<tr><td colspan="9" style="text-align:center;color:#999;padding:40px">暂无数据</td></tr>`;
   document.getElementById("pagerInfo").textContent = `共1页/${list.length}条`;
   renderPlatformStats();
 }
@@ -434,12 +422,13 @@ function renderDrawer(){
   const isDefault = curRange.start === yr.start && curRange.end === yr.end;
   
   document.getElementById("dListTitle").textContent =
-    `出入库明细`;
+    `出入库明细（${curRange.start||"不限"} ~ ${curRange.end||"不限"}，按时间倒序，点击记录展开地块分摊）`;
   document.getElementById("dStats").innerHTML = `
-    <div class="d-stat"><div class="l">入库</div><div class="v" style="color:#00a870">${fmt(inQ)}${s.unit}</div></div>
-    <div class="d-stat"><div class="l">出库</div><div class="v" style="color:#ff8f1f">${fmt(outQ)}${s.unit}</div></div>
-    <div class="d-stat"><div class="l">入库金额</div><div class="v" style="color:#00a870">¥${fmt(recAmount(all,"in"))}</div></div>
-    <div class="d-stat"><div class="l">出库金额</div><div class="v" style="color:#ff8f1f">¥${fmt(recAmount(all,"out"))}</div></div>`;
+    <div class="d-stat"><div class="l">总入库</div><div class="v" style="color:#00a870">${fmt(inQ)}${s.unit}</div></div>
+    <div class="d-stat"><div class="l">总支取</div><div class="v" style="color:#ff8f1f">${fmt(outQ)}${s.unit}</div></div>
+    <div class="d-stat"><div class="l">当前库存</div><div class="v" style="color:#2f7bff">${fmt(s.stock)}${s.unit}</div></div>
+    <div class="d-stat"><div class="l">入库总金额</div><div class="v" style="color:#00a870">¥${fmt(recAmount(all,"in"))}</div></div>
+    <div class="d-stat"><div class="l">支取总金额</div><div class="v" style="color:#ff8f1f">¥${fmt(recAmount(all,"out"))}</div></div>`;
   document.getElementById("dRecords").innerHTML = recs.length ? recs.map((r,i)=>{
     const plots = splitPlots(r);
     const plotRows = plots.map(p=>`
@@ -451,28 +440,25 @@ function renderDrawer(){
         <td style="font-weight:600">¥ ${fmt(p.amount)}</td>
       </tr>`).join("");
     const plotBlock = (r.type==="out" && plots.length) ? `
-      <div class="plot-title">出库地块分摊（共 ${plots.length} 个地块，超出可滚动查看）</div>
-      <div class="plot-scroll">
-        <table class="plot-table">
-          <thead><tr><th>地块名称（作物）</th><th>亩数</th><th>亩数占比</th><th>分摊出库数量</th><th>分摊出库金额</th></tr></thead>
-          <tbody>${plotRows}
-            <tr class="sum"><td>合计</td><td>${fmt(plots.reduce((a,p)=>a+p.mu,0))} 亩</td><td>100%</td><td>${fmt(r.qty)} ${s.unit}</td><td>¥ ${fmt(r.qty*r.price)}</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="mu-note">＊ 分摊规则：各地块分摊数量 = 出库总数量 ×（该地块亩数 ÷ 所选地块总亩数），金额 = 分摊数量 × 单价 ${fmt(r.price)}元/${s.unit}</div>` : "";
+      <div class="plot-title">支取地块分摊（按地块亩数占比划分）</div>
+      <table class="plot-table">
+        <thead><tr><th>地块名称（作物）</th><th>亩数</th><th>亩数占比</th><th>分摊支取数量</th><th>分摊支取金额</th></tr></thead>
+        <tbody>${plotRows}
+          <tr class="sum"><td>合计</td><td>${fmt(plots.reduce((a,p)=>a+p.mu,0))} 亩</td><td>100%</td><td>${fmt(r.qty)} ${s.unit}</td><td>¥ ${fmt(r.qty*r.price)}</td></tr>
+        </tbody>
+      </table>
+      <div class="mu-note">＊ 分摊规则：各地块分摊数量 = 支取总数量 ×（该地块亩数 ÷ 所选地块总亩数），金额 = 分摊数量 × 单价 ${fmt(r.price)}元/${s.unit}</div>` : "";
     return `
     <div class="record" onclick="this.classList.toggle('open')">
       <div class="record-head">
         <span class="r-arrow">▶</span>
-        <span class="badge ${r.type}">${r.type==="in"?"入库":"出库"}</span>
-        <span class="r-person">${r.person}${r.category?` - ${r.category}`:''}</span>
-        <span class="r-time">🕐 ${r.time||"—"}</span>
+        <span class="badge ${r.type}">${r.type==="in"?"入库":"支取"}</span>
+        <span class="r-person">${r.person}</span>
         <span class="r-field">${fmt(r.qty)} ${s.unit} × ${fmt(r.price)}元/${s.unit}</span>
         <span class="r-amt ${r.type}">${r.type==="in"?"+":"-"}¥ ${fmt(r.qty*r.price)}</span>
       </div>
       <div class="record-body">
-        <div class="record-meta">农事描述：${r.note||"—"}</div>
+        <div class="record-meta">时间：${r.time} ｜ 备注：${r.note||"—"}</div>
         ${plotBlock}
       </div>
     </div>`;
