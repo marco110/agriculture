@@ -44,7 +44,7 @@
   .btn-danger { background:#f56c6c; color:#fff; }
   /* 表格 */
   .table-wrap { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.05); overflow:auto; }
-  table { width:100%; border-collapse:collapse; min-width:1000px; }
+  table { width:100%; border-collapse:collapse; min-width:1140px; }
   th { background:#fafafa; color:#666; font-weight:600; text-align:left; padding:12px 14px; border-bottom:1px solid #ebeef5; white-space:nowrap; }
   td { padding:12px 14px; border-bottom:1px solid #f2f3f5; vertical-align:middle; }
   tr:last-child td { border-bottom:none; }
@@ -69,7 +69,7 @@
   .drawer-head .sub { color:#999; font-size:12px; margin-top:3px; }
   .close-x { cursor:pointer; color:#999; font-size:20px; line-height:1; }
   .close-x:hover { color:#333; }
-  .drawer-body { flex:1; overflow-y:auto; padding:16px 22px 30px; }
+  .drawer-body { flex:1; overflow-y:auto; overflow-x:hidden; padding:16px 22px 30px; }
   .drawer-filter { background:#fff; border:1px solid #eef0ef; border-radius:8px; padding:12px 14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
   .drawer-filter label { color:#555; }
   .drawer-filter .tilde { color:#999; }
@@ -81,13 +81,25 @@
   .d-stat .v { font-size:18px; font-weight:700; margin-top:2px; }
   /* 时间线记录 */
   .record { background:#fff; border-radius:8px; border:1px solid #eef0ef; margin-bottom:10px; overflow:hidden; }
-  .record-head { display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; flex-wrap:wrap; }
+  /* 记录头部：全部物资模式分两行 —— 第一行「农资名称 - 农资编码」，第二行其他信息 */
+  .record-head { padding:12px 14px; cursor:pointer; }
   .record-head:hover { background:#fafcfb; }
+  .record-head .ln1 { display:flex; align-items:flex-start; gap:8px; }
+  .record-head .ln2 { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:7px; padding-left:19px; }
+  .record-head .ln2 .r-amt { margin-left:auto; }
   .badge { padding:2px 10px; border-radius:3px; color:#fff; font-size:12px; white-space:nowrap; }
   .badge.in { background:#00a870; }
   .badge.out { background:#ff8f1f; }
-  .r-person { font-weight:600; }
+  /* 全部出入库记录：每条流水前的物资标识（农资名称可能很长，需完整换行展示，不截断） */
+  .sup-chip { display:inline-block; max-width:100%; padding:2px 9px; border-radius:9px; background:#eef3fb; color:#2f7bff; font-size:11.5px; font-weight:600; white-space:normal; word-break:break-word; line-height:1.6; }
+  .sup-chip .code { color:#8aa6cc; font-weight:400; white-space:nowrap; }
+  .sup-chip .sep { color:#b6c6dc; font-weight:400; margin:0 5px; }
+  /* 全部出入库记录：明细汇总涉及的农资名称（名称可能较长，完整换行展示） */
+  .sup-summary { font-size:12px; color:#888; line-height:2; margin:-2px 0 10px; word-break:break-word; }
+  .sup-summary b { color:#2f7bff; font-weight:600; }
+  .r-person { font-weight:500; }
   .r-field { color:#666; }
+  .r-time { color:#999; font-size:12.5px; }
   .r-amt { margin-left:auto; font-weight:700; }
   .r-amt.in { color:#00a870; }
   .r-amt.out { color:#ff8f1f; }
@@ -99,12 +111,34 @@
   /* 地块明细表 */
   .plot-title { font-size:13px; font-weight:600; color:#333; margin:10px 0 6px; display:flex; align-items:center; gap:6px; }
   .plot-title::before { content:""; width:3px; height:12px; background:#00a870; border-radius:2px; display:inline-block; }
-  .plot-table { width:100%; border-collapse:collapse; font-size:12.5px; }
-  .plot-table th { background:#f2f7f4; padding:7px 10px; font-weight:600; color:#556; }
-  .plot-table td { padding:7px 10px; border-bottom:1px solid #f0f2f1; text-align:left; }
-  .plot-table tr.sum td { background:#fbf6ef; font-weight:700; color:#b26a00; border-bottom:none; }
+  /* 地块分摊表格：宽/高都可能超出，容器内双向滚动，表头与合计行吸顶/吸底 */
+  .plot-scroll { max-height: 300px; overflow: auto; border:1px solid #eef0ef; border-radius:6px; background:#fff; }
+  .plot-scroll::-webkit-scrollbar { width:8px; height:8px; }
+  .plot-scroll::-webkit-scrollbar-thumb { background:#d5dbd8; border-radius:4px; }
+  .plot-scroll::-webkit-scrollbar-thumb:hover { background:#bcc5c0; }
+  .plot-scroll::-webkit-scrollbar-track { background:#f5f7f6; }
+  .plot-table { width:100%; min-width:620px; border-collapse:separate; border-spacing:0; font-size:12.5px; }
+  .plot-table th { position:sticky; top:0; z-index:2; background:#f2f7f4; padding:8px 10px; font-weight:600; color:#556; white-space:nowrap; text-align:left; box-shadow:inset 0 -1px 0 #e3eae6; }
+  .plot-table td { padding:8px 10px; border-bottom:1px solid #f0f2f1; text-align:left; white-space:nowrap; }
+  .plot-table th:first-child, .plot-table td:first-child { min-width:220px; white-space:normal; }
+  .plot-table tbody tr:last-child td { border-bottom:none; }
+  .plot-table tr.sum td { position:sticky; bottom:0; z-index:2; background:#fbf6ef; font-weight:700; color:#b26a00; border-bottom:none; box-shadow:inset 0 1px 0 #efe3d2; }
   .crop-tag { display:inline-block; margin-left:6px; padding:1px 8px; border-radius:9px; background:#e8f7f1; color:#00a870; font-size:11.5px; font-weight:600; vertical-align:1px; }
+  /* 地块名称 + 作物 + 品种 */
+  .plot-cell { display:flex; align-items:baseline; flex-wrap:wrap; row-gap:3px; }
+  .plot-cell .pname { word-break:break-word; }
+  .variety-tag { display:inline-block; margin-left:5px; padding:1px 8px; border-radius:9px; background:#f1f4f8; color:#5b6b7c; font-size:11.5px; font-weight:600; vertical-align:1px; white-space:nowrap; }
   .mu-note { color:#999; font-size:12px; margin-top:6px; }
+  /* 出入库明细分页条 */
+  .pager { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:12px; padding:10px 12px; background:#fff; border:1px solid #eef0ef; border-radius:8px; font-size:12.5px; color:#666; }
+  .pager .pg-info b { color:#00a870; }
+  .pager .pg-right { display:flex; align-items:center; gap:6px; }
+  .pager select { height:28px; border:1px solid #dfe4e1; border-radius:5px; padding:0 6px; color:#555; font-size:12.5px; background:#fff; }
+  .pager .pg-btn { height:28px; min-width:28px; padding:0 9px; border:1px solid #dfe4e1; border-radius:5px; background:#fff; color:#555; cursor:pointer; font-size:12.5px; }
+  .pager .pg-btn:hover:not(:disabled) { border-color:#00a870; color:#00a870; }
+  .pager .pg-btn:disabled { color:#c3c9c6; cursor:not-allowed; background:#fafbfa; }
+  .pager .pg-num.active { background:#00a870; border-color:#00a870; color:#fff; font-weight:600; }
+  .pager .pg-dot { color:#999; padding:0 2px; }
   /* 弹窗 */
   .modal-mask { position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; display:none; align-items:flex-start; justify-content:center; }
   .modal { background:#fff; border-radius:8px; width:520px; max-width:92vw; margin-top:8vh; max-height:84vh; overflow-y:auto; }
@@ -116,9 +150,24 @@
   .form-row .fl i { color:#f56c6c; font-style:normal; margin-right:2px; }
   .form-row .fc { flex:1; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .form-row input, .form-row select, .form-row textarea { flex:1; min-width:120px; }
+  /* 规格组合输入：规格值 + 计量单位 / 包装单位 */
+  .spec-sel { flex:0 0 112px !important; min-width:112px !important; color:#606266; }
+  .spec-slash { color:#999; flex-shrink:0; }
   .hint { color:#999; font-size:12px; }
   .modal-foot { padding:14px 24px 20px; text-align:right; }
   .modal-foot .btn { margin-left:10px; padding:8px 24px; }
+  /* 导出预览弹窗 */
+  .exp-tip { color:#888; font-size:12.5px; margin-bottom:10px; line-height:1.8; }
+  .exp-tip b { color:#2f7bff; font-weight:600; }
+  .exp-scroll { overflow:auto; max-height:54vh; border:1px solid #eef0ef; border-radius:6px; }
+  .exp-scroll::-webkit-scrollbar { width:8px; height:8px; }
+  .exp-scroll::-webkit-scrollbar-thumb { background:#d5dbd8; border-radius:4px; }
+  .exp-table { width:100%; min-width:1000px; border-collapse:separate; border-spacing:0; font-size:12.5px; }
+  .exp-table th { position:sticky; top:0; z-index:2; background:#f2f7f4; padding:8px 10px; font-weight:600; color:#556; white-space:nowrap; text-align:left; box-shadow:inset 0 -1px 0 #e3eae6; }
+  .exp-table td { padding:8px 10px; border-bottom:1px solid #f0f2f1; white-space:nowrap; }
+  .exp-table tr:last-child td { border-bottom:none; }
+  .exp-table .exp-name { max-width:260px; white-space:normal; word-break:break-word; }
+  .exp-table .badge { font-size:11px; padding:1px 8px; }
   .toast { position:fixed; top:60px; left:50%; transform:translateX(-50%); background:#00a870; color:#fff; padding:10px 22px; border-radius:6px; z-index:300; display:none; box-shadow:0 4px 14px rgba(0,168,112,.4); }
 </style>
 </head>
@@ -127,15 +176,15 @@
 <div class="topbar">
   <nav class="nav">
     <a class="active"><span class="dot"></span>农资管理</a>
-	<a href="planting_records.html"><span class="dot" style="background:#c9d6d0"></span>种植档案</a>
+    <a href="种植档案演示.html"><span class="dot" style="background:#c9d6d0"></span>种植档案</a>
   </nav>
-  <div class="right"><span>五莲于里农场</span><span class="avatar">X</span><span>XX</span></div>
+  <div class="right"><span>五莲于里农场</span><span class="avatar">马</span><span>马萌</span></div>
 </div>
-
+<!--
 <div class="page-head">
   <h1>农资管理</h1>
-  <p>库管员录入农资 → 员工小程序支取（按地块）｜点击“出入库记录”查看每种物资的完整台账</p>
-</div>
+  <p>库管员录入农资（入库）→ 员工小程序出库（按地块）｜点击“出入库记录”查看每种物资的完整台账</p>
+</div>-->
 
 <div class="container">
   <!-- 平台汇总 -->
@@ -158,6 +207,7 @@
     <button class="btn btn-primary" onclick="renderTable()">查询</button>
     <button class="btn btn-plain" onclick="resetFilter()">重置</button>
     <button class="btn btn-primary" style="margin-left:auto" onclick="openAdd()">＋ 新增</button>
+    <button class="btn btn-plain" onclick="openAllDrawer()">出入库记录</button>
   </div>
 
   <!-- 物资列表 -->
@@ -190,17 +240,43 @@
     <span class="close-x" onclick="closeDrawer()">✕</span>
   </div>
   <div class="drawer-body">
-    <div class="drawer-stats" id="dStats"></div>
-	<div class="drawer-filter">
+  	<div class="drawer-filter">
+      <span id="dAllFilterWrap" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;">
+        <select id="dSupply" style="width:190px; display: none;"></select>
+        <label style="margin-left:4px">农资名称：</label>
+        <input type="text" id="dSupName" placeholder="请输入农资名称" style="width:120px" onkeydown="if(event.key==='Enter')applyQuery()">
+        <label style="margin-left:4px">农资编码：</label>
+        <input type="text" id="dSupCode" placeholder="请输入农资编码" style="width:120px" onkeydown="if(event.key==='Enter')applyQuery()">
+		<label style="margin-left:4px">农资类型：</label>
+        <select id="dSupType" style="width:120px">
+          <option value="">全部</option>
+          <option value="种子">种子</option>
+          <option value="肥料">肥料</option>
+          <option value="农药">农药</option>
+          <option value="其他">其他</option>
+        </select>
+      </span>
       <label>日期：</label>
-      <input type="date" id="dStart" style="width:150px">
+      <input type="date" id="dStart" style="width:100px">
       <span class="tilde">至</span>
-      <input type="date" id="dEnd" style="width:150px">
-      <button class="btn btn-primary" onclick="applyDate()">查询</button>
-      <button class="btn btn-plain" onclick="resetDate()">重置</button>
+      <input type="date" id="dEnd" style="width:100px">
+      <label style="margin-left:4px">类型：</label>
+      <select id="dType" style="width:100px">
+        <option value="">全部</option>
+        <option value="out">出库</option>
+        <option value="in">入库</option>
+      </select>
+      <button class="btn btn-primary" onclick="applyQuery()">查询</button>
+      <button class="btn btn-plain" onclick="resetQuery()">重置</button>
+      <button class="btn btn-plain" style="margin-left:auto" onclick="openExportModal()">⬇ 导出</button>
     </div>
+	
+    <div class="drawer-stats" id="dStats"></div>
+
     <div class="plot-title" id="dListTitle">出入库明细（按时间倒序，点击记录展开地块分摊）</div>
+    <div class="sup-summary" id="dSupSummary"></div>
     <div id="dRecords"></div>
+    <div id="dPager"></div>
   </div>
 </div>
 
@@ -212,7 +288,13 @@
       <div class="form-row"><div class="fl"><i>*</i>名称：</div><div class="fc"><input type="text" id="aName" placeholder="请输入名称"></div></div>
       <div class="form-row"><div class="fl"><i>*</i>农资编码：</div><div class="fc"><input type="text" id="aCode" placeholder="请输入农资编码"></div></div>
       <div class="form-row"><div class="fl"><i>*</i>农资类型：</div><div class="fc"><select id="aType"><option value="">请选择农资类型</option><option>种子</option><option>肥料</option><option>农药</option><option>其他</option></select></div></div>
-      <div class="form-row"><div class="fl"><i>*</i>规格：</div><div class="fc"><input type="text" id="aSpec" placeholder="规格" style="flex:1"><span class="hint">例:50公斤/袋</span></div></div>
+      <div class="form-row"><div class="fl"><i>*</i>规格：</div><div class="fc">
+        <input type="text" id="aSpec" placeholder="规格">
+        <select id="aSpecUnit" class="spec-sel"><option value="">计量单位</option><option>斤</option><option>公斤</option><option>克</option><option>千克</option><option>吨</option><option>毫升</option><option>升</option><option>米</option></select>
+        <span class="spec-slash">/</span>
+        <select id="aSpecPkg" class="spec-sel"><option value="">包装单位</option><option>袋</option><option>瓶</option><option>包</option><option>套</option><option>桶</option><option>罐</option><option>盒</option><option>件</option></select>
+        <span class="hint">例:50公斤/袋</span>
+      </div></div>
       <div class="form-row"><div class="fl"><i>*</i>单价(元)：</div><div class="fc"><input type="number" id="aPrice" placeholder="单价" style="flex:1"></div></div>
       <div class="form-row"><div class="fl"><i>*</i>库存量：</div><div class="fc"><input type="number" id="aStock" placeholder="库存量" style="flex:1"></div></div>
       <div class="form-row"><div class="fl">备注：</div><div class="fc"><textarea id="aNote" rows="3" placeholder="请输入备注"></textarea></div></div>
@@ -240,6 +322,23 @@
   </div>
 </div>
 
+<!-- 出入库记录导出弹窗 -->
+<div class="modal-mask" id="exportModal">
+  <div class="modal" style="width:980px">
+    <div class="modal-head"><h3>出入库记录导出</h3><span class="close-x" onclick="hide('exportModal')">✕</span></div>
+    <div class="modal-body" style="padding-top:12px">
+      <div class="exp-tip" id="expTip"></div>
+      <div class="exp-scroll">
+        <table class="exp-table" id="expTable"></table>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-cancel" onclick="hide('exportModal')">取 消</button>
+      <button class="btn btn-primary" onclick="doExport()">确认导出</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -249,40 +348,72 @@ const supplies = [
   {
     id:1, name:"物资1", code:"物资1", type:"其他", spec:"5斤/瓶", unit:"瓶", price:7.5, stock:20, note:"", img:false,
     records:[
-      { type:"in", person:"张建国", qty:50, price:7.5, time:"2026-07-02 09:30", note:"首批采购入库" },
-      { type:"out", person:"王强", qty:20, price:7.5, time:"2026-07-18 14:05", note:"夏管作业领用",
-        plots:[ {name:"于里北区-1号地块", crop:"小麦", mu:40}, {name:"于里北区-2号地块", crop:"玉米", mu:40} ] },
-      { type:"in", person:"张建国", qty:30, price:7.5, time:"2026-08-10 10:20", note:"补充库存" },
-      { type:"out", person:"李伟", qty:40, price:7.5, time:"2026-08-28 16:40", note:"秋季播种前土壤处理",
-        plots:[ {name:"东区-1号地块", crop:"小麦", mu:60}, {name:"东区-2号地块", crop:"小麦", mu:60}, {name:"东区-3号地块", crop:"玉米", mu:120} ] }
+      { type:"in", person:"张建国",category:"",qty:50, price:7.5, time:"2026-07-02", note:"首批采购入库" },
+      { type:"out", person:"王强", category:"播种",qty:20, price:7.5, time:"2026-07-18", note:"夏管作业领用",
+        plots:[ {name:"于里北区-1号地块", crop:"小麦", variety:"山农-28", mu:40}, {name:"于里北区-2号地块", crop:"玉米", variety:"郑单-958", mu:40} ] },
+      { type:"in", person:"张建国", category:"",qty:30, price:7.5, time:"2026-08-10", note:"补充库存" },
+      { type:"out", person:"李伟", category:"播种",qty:40, price:7.5, time:"2026-08-28", note:"秋季播种前土壤处理",
+        plots:[ {name:"东区-1号地块", crop:"小麦", variety:"山农-28", mu:60}, {name:"东区-2号地块", crop:"小麦", variety:"山农-28", mu:60}, {name:"东区-3号地块", crop:"玉米", variety:"郑单-958", mu:120} ] }
     ]
   },
   {
-    id:2, name:"雨小麦", code:"nxm-001", type:"种子", spec:"20斤/袋", unit:"袋", price:66.67, stock:90, note:"", img:true,
+    id:2, name:"雨小麦", code:"nxm-001", type:"种子", spec:"20斤/袋", unit:"袋", price:66.67, stock:168, note:"", img:true,
     records:[
-      { type:"in", person:"张建国", qty:120, price:66.67, time:"2026-06-15 08:50", note:"2026年秋播麦种采购" },
-      { type:"out", person:"陈涛", qty:15, price:66.67, time:"2026-09-01 09:15", note:"东区播种领种",
-        plots:[ {name:"东区-1号地块", crop:"小麦", mu:200}, {name:"东区-2号地块", crop:"小麦", mu:100} ] },
-      { type:"out", person:"刘洋", qty:12, price:66.67, time:"2026-09-05 15:30", note:"西区播种领种",
-        plots:[ {name:"西区-试验田", crop:"玉米", mu:150}, {name:"西区-2号地块", crop:"玉米", mu:100}, {name:"北区-1号地块", crop:"小麦", mu:50} ] },
-      { type:"out", person:"赵敏", qty:3, price:66.67, time:"2026-09-10 11:00", note:"南区育苗补种",
-        plots:[ {name:"南区-育苗田", crop:"玉米", mu:90} ] }
+      { type:"in", person:"张建国", category:"",qty:120, price:66.67, time:"2026-06-15", note:"2026年秋播麦种采购" },
+      { type:"out", person:"孙磊", category:"播种", qty:10, price:66.67, time:"2026-09-12", note:"多地块分散播种领种（10 个地块，用于演示地块分摊滚动）",
+        plots:[
+          {name:"东区-3号地块", crop:"玉米", variety:"郑单-958", mu:30}, {name:"东区-4号地块", crop:"玉米", variety:"先玉-335", mu:30},
+          {name:"东区-5号地块", crop:"小麦", variety:"济麦-22", mu:30}, {name:"东区-6号地块", crop:"小麦", variety:"山农-28", mu:30},
+          {name:"南区-1号地块", crop:"玉米", variety:"先玉-335", mu:30}, {name:"南区-2号地块", crop:"玉米", variety:"郑单-958", mu:30},
+          {name:"南区-3号地块", crop:"小麦", variety:"山农-28", mu:30}, {name:"北区-2号地块", crop:"小麦", variety:"鲁麦-23", mu:30},
+          {name:"北区-3号地块", crop:"玉米", variety:"先玉-335", mu:30}, {name:"西区-3号地块（东片长名称测试）", crop:"小麦", variety:"山农-28", mu:30}
+        ] },
+      { type:"out", person:"陈涛", category:"播种",qty:15, price:66.67, time:"2026-09-01", note:"东区播种领种",
+        plots:[ {name:"东区-1号地块", crop:"小麦", variety:"山农-28", mu:200}, {name:"东区-2号地块", crop:"小麦", variety:"山农-28", mu:100} ] },
+      { type:"out", person:"刘洋", category:"播种",qty:12, price:66.67, time:"2026-09-05", note:"西区播种领种",
+        plots:[ {name:"西区-试验田", crop:"玉米", variety:"先玉-335", mu:150}, {name:"西区-2号地块", crop:"玉米", variety:"郑单-958", mu:100}, {name:"北区-1号地块", crop:"小麦", variety:"鲁麦-23", mu:50} ] },
+      { type:"out", person:"赵敏",category:"播种", qty:3, price:66.67, time:"2026-09-10", note:"南区育苗补种",
+        plots:[ {name:"南区-育苗田", crop:"玉米", variety:"先玉-335", mu:90} ] },
+      { type:"in", person:"张建国", category:"", qty:60, price:66.67, time:"2026-09-18", note:"春季追加采购" },
+      { type:"out", person:"陈涛", category:"播种", qty:8, price:66.67, time:"2026-05-20", note:"春季补播领种",
+        plots:[ {name:"东区-1号地块", crop:"小麦", variety:"山农-28", mu:100}, {name:"东区-2号地块", crop:"小麦", variety:"山农-28", mu:60} ] },
+      { type:"in", person:"张建国", category:"", qty:40, price:66.67, time:"2026-06-28", note:"麦种补货" },
+      { type:"out", person:"刘洋", category:"播种", qty:6, price:66.67, time:"2026-07-06", note:"西区补播",
+        plots:[ {name:"西区-试验田", crop:"玉米", variety:"先玉-335", mu:120}, {name:"北区-1号地块", crop:"小麦", variety:"鲁麦-23", mu:60} ] },
+      { type:"out", person:"王强", category:"播种", qty:5, price:66.67, time:"2026-07-22", note:"苗期补种",
+        plots:[ {name:"于里北区-1号地块", crop:"小麦", variety:"山农-28", mu:60}, {name:"于里北区-2号地块", crop:"玉米", variety:"郑单-958", mu:40} ] },
+      { type:"in", person:"马萌", category:"", qty:30, price:66.67, time:"2026-08-05", note:"临时补库" },
+      { type:"out", person:"孙磊", category:"播种", qty:9, price:66.67, time:"2026-08-19", note:"南区集中播种（单一地块）",
+        plots:[ {name:"南区-1号地块", crop:"玉米", variety:"先玉-335", mu:90} ] },
+      { type:"out", person:"赵敏", category:"播种", qty:4, price:66.67, time:"2026-08-30", note:"小地块补种",
+        plots:[ {name:"东区-3号地块", crop:"玉米", variety:"郑单-958", mu:40}, {name:"东区-4号地块", crop:"玉米", variety:"先玉-335", mu:40} ] },
+      { type:"out", person:"陈涛", category:"播种", qty:10, price:66.67, time:"2026-09-15", note:"东区收尾播种",
+        plots:[ {name:"东区-5号地块", crop:"小麦", variety:"济麦-22", mu:60}, {name:"东区-6号地块", crop:"小麦", variety:"山农-28", mu:40} ] }
     ]
   },
   {
-    id:3, name:"旋耕犁地", code:"HGRF333", type:"其他", spec:"1个/辆", unit:"辆", price:200, stock:794, note:"农资备注地方", img:false,
+    id:3, name:"尿素", code:"HGRF333", type:"其他", spec:"1个/辆", unit:"辆", price:200, stock:794, note:"农资备注地方", img:false,
     records:[
-      { type:"in", person:"马萌", qty:800, price:200, time:"2026-05-20 14:00", note:"旋耕犁配件批量入库" },
-      { type:"out", person:"王强", qty:6, price:200, time:"2026-08-15 10:10", note:"耕地磨损更换",
-        plots:[ {name:"东区-1号地块", crop:"小麦", mu:120}, {name:"西区-试验田", crop:"玉米", mu:120}, {name:"南区-育苗田", crop:"玉米", mu:120} ] }
+      { type:"in", person:"马萌", category:"",qty:800, price:200, time:"2026-05-20", note:"旋耕犁配件批量入库" },
+      { type:"out", person:"王强",category:"播种", qty:6, price:200, time:"2026-08-15", note:"耕地磨损更换",
+        plots:[ {name:"东区-1号地块", crop:"小麦", variety:"山农-28", mu:120}, {name:"西区-试验田", crop:"玉米", variety:"先玉-335", mu:120}, {name:"南区-育苗田", crop:"玉米", variety:"先玉-335", mu:120} ] }
     ]
   },
   {
     id:4, name:"济麦-22", code:"JM-22", type:"种子", spec:"20kg/袋", unit:"袋", price:50.76, stock:150, note:"", img:true,
     records:[
-      { type:"in", person:"张建国", qty:200, price:50.76, time:"2026-06-18 09:40", note:"济麦-22良种采购" },
-      { type:"out", person:"陈涛", qty:50, price:50.76, time:"2026-09-08 13:20", note:"大田播种领种",
-        plots:[ {name:"东区-2号地块", crop:"小麦", mu:400}, {name:"北区-1号地块", crop:"小麦", mu:100} ] }
+      { type:"in", person:"张建国",category:"", qty:200, price:50.76, time:"2026-06-18", note:"济麦-22良种采购" },
+      { type:"out", person:"陈涛",category:"播种", qty:50, price:50.76, time:"2026-09-08", note:"大田播种领种",
+        plots:[ {name:"东区-2号地块", crop:"小麦", variety:"山农-28", mu:400}, {name:"北区-1号地块", crop:"小麦", variety:"鲁麦-23", mu:100} ] }
+    ]
+  },
+  {
+    /* 演示：农资名称较长的场景（名称含规格/厂家/含量），用于验证明细中长名称的完整展示与名称/编码搜索 */
+    id:5, name:"1千克/瓶/天津绿享@1.4%复硝酚钠", code:"NXF-TJ-1408", type:"农药", spec:"1千克/瓶", unit:"瓶", price:38.5, stock:36, note:"植物生长调节剂（长名称演示）", img:false,
+    records:[
+      { type:"in", person:"张建国", category:"", qty:60, price:38.5, time:"2026-06-20", note:"复硝酚钠集中采购入库" },
+      { type:"out", person:"王强", category:"打药", qty:24, price:38.5, time:"2026-08-22", note:"东区玉米田病虫害防治",
+        plots:[ {name:"东区-1号地块", crop:"玉米", variety:"郑单-958", mu:120}, {name:"东区-2号地块", crop:"玉米", variety:"先玉-335", mu:120} ] }
     ]
   }
 ];
@@ -297,7 +428,7 @@ function show(id){ document.getElementById(id).style.display="flex"; }
 function recSum(recs, type){ return recs.filter(r=>r.type===type).reduce((s,r)=>s+r.qty,0); }
 function recAmount(recs, type){ return recs.filter(r=>r.type===type).reduce((s,r)=>s+r.qty*r.price,0); }
 
-/* 地块分摊：按亩数占比划分数量与金额（仅支取记录有地块，入库记录返回空数组） */
+/* 地块分摊：按亩数占比划分数量与金额（仅出库记录有地块，入库记录返回空数组） */
 function splitPlots(rec){
   const list = rec.plots || [];
   const totalMu = list.reduce((s,p)=>s+(+p.mu||0),0);
@@ -305,7 +436,7 @@ function splitPlots(rec){
   let assigned = 0;
   return list.map((p,i)=>{
     let qty;
-    if(i === list.length-1){ qty = +(rec.qty - assigned).toFixed(2); } // 末位兜底，保证合计=支取数
+    if(i === list.length-1){ qty = +(rec.qty - assigned).toFixed(2); } // 末位兜底，保证合计=出库数
     else { qty = +(rec.qty * p.mu/totalMu).toFixed(2); assigned = +(assigned+qty).toFixed(2); }
     return { ...p, ratio:(p.mu/totalMu*100), qty, amount:qty*rec.price };
   });
@@ -324,9 +455,9 @@ function renderPlatformStats(){
   document.getElementById("platformStats").innerHTML = `
     <div class="stat-card"><div class="label">农资品类</div><div class="value blue">${supplies.length} <span style="font-size:13px;color:#999;font-weight:400">种</span></div></div>
     <div class="stat-card"><div class="label">累计入库次数</div><div class="value green">${cntIn} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
-    <div class="stat-card"><div class="label">累计支取次数</div><div class="value orange">${cntOut} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
+    <div class="stat-card"><div class="label">累计出库次数</div><div class="value orange">${cntOut} <span style="font-size:13px;font-weight:400;color:#999">次</span> </div></div>
     <div class="stat-card"><div class="label">累计入库金额</div><div class="value green">¥ ${fmt(amountIn)}</div></div>
-    <div class="stat-card"><div class="label">累计支取金额</div><div class="value orange">¥ ${fmt(amountOut)}</div></div>
+    <div class="stat-card"><div class="label">累计出库金额</div><div class="value orange">¥ ${fmt(amountOut)}</div></div>
     <div class="stat-card"><div class="label">当前库存价值</div><div class="value blue">¥ ${fmt(stockVal)}</div></div>`;
 }
 
@@ -358,16 +489,16 @@ function renderTable(){
       <td><span class="tag ${s.type==='种子'?'seed':'other'}">${s.type}</span></td>
       <td>${s.spec}</td>
       <td>${fmt(s.price)}元/${s.unit}</td>
-      <td style="font-weight:600;color:#00a870">${fmt(s.stock)}${s.unit}</td>
+      <td style="font-weight:600;color:#2f7bff">${fmt(s.stock)}${s.unit}</td>
       <td>${s.note||'—'}</td>
       <td style="white-space:nowrap">
-        <span class="op-link" onclick="openDrawer(${s.id})">出入库记录</span>
         <span class="op-link" onclick="openStock(${s.id})">添加库存</span>
         <span class="op-link" onclick="toast('演示环境：编辑功能略')">编辑</span>
+        <span class="op-link" onclick="openDrawer(${s.id})">出入库记录</span>
         <span class="op-link danger" onclick="delSupply(${s.id})">删除</span>
       </td>
     </tr>`).join("")
-    : `<tr><td colspan="9" style="text-align:center;color:#999;padding:40px">暂无数据</td></tr>`;
+    : `<tr><td colspan="11" style="text-align:center;color:#999;padding:40px">暂无数据</td></tr>`;
   document.getElementById("pagerInfo").textContent = `共1页/${list.length}条`;
   renderPlatformStats();
 }
@@ -379,90 +510,295 @@ function delSupply(id){
 }
 
 /* ================= 出入库记录抽屉 ================= */
-let curSupply = null;   // 当前查看的物资
+/* 两种模式：
+   single = 单个物资的出入库记录（列表行「出入库记录」进入）
+   all    = 全部物资的出入库记录（工具栏「出入库记录」进入），各物资流水逐条平铺展示，不做合并 */
+let curMode     = "single";   // "single" 单物资 ｜ "all" 全部物资
+let curSupply   = null;       // single 模式下的物资
+let curSupplyId = "all";      // all 模式下的物资筛选："all"=全部物资，其余为物资 id 字符串
+let curSupType  = "";         // all 模式下的农资类型筛选：""=全部
+let curSupName  = "";         // all 模式下的农资名称搜索（模糊、忽略大小写）
+let curSupCode  = "";         // all 模式下的农资编码搜索（模糊、忽略大小写）
 let curRange  = null;   // 当前查询的日期区间
+let curType   = "";     // 当前查询的类型：""=全部 ｜ "out"=出库 ｜ "in"=入库
+let curPage   = 1;      // 明细当前页码
+let pageSize  = 10;     // 每页条数
 function yearRange(){ const y = new Date().getFullYear(); return { start:`${y}-01-01`, end:`${y}-12-31` }; }
 function recDate(r){ return (r.time||"").slice(0,10); }
-function inRange(r){
+function inRange(r){                       // 日期条件
   if(!curRange) return true;
   const d = recDate(r);
   if(curRange.start && d < curRange.start) return false;
   if(curRange.end   && d > curRange.end)   return false;
   return true;
 }
-function syncDateInputs(){
+function inType(r){ return !curType || r.type === curType; }          // 类型条件
+function inSupply(item){                                             // 物资条件（仅 all 模式生效：物资 + 农资类型 + 名称 + 编码）
+  if(curMode !== "all") return true;
+  const s = item.s;
+  if(curSupplyId !== "all" && String(s.id) !== curSupplyId) return false;
+  if(curSupType && s.type !== curSupType) return false;
+  if(curSupName && !(s.name||"").toLowerCase().includes(curSupName.toLowerCase())) return false;
+  if(curSupCode && !(s.code||"").toLowerCase().includes(curSupCode.toLowerCase())) return false;
+  return true;
+}
+/* 明细数据源：统一成 [{ s:物资, r:记录 }]；全部物资按物资顺序平铺所有流水，不做合并 */
+function sourceOf(){
+  if(curMode === "all"){
+    const arr = [];
+    supplies.forEach(s => (s.records||[]).forEach(r => arr.push({ s, r })));
+    return arr;
+  }
+  return (curSupply ? curSupply.records : []).map(r => ({ s:curSupply, r }));
+}
+/* 明细查询：日期 + 类型 + 物资 → 按时间降序（同一时间按物资名稳定排序） */
+function detailList(){
+  return sourceOf()
+    .filter(item => inRange(item.r) && inType(item.r) && inSupply(item))
+    .sort((a,b)=> (b.r.time||"").localeCompare(a.r.time||"") || (a.s.name||"").localeCompare(b.s.name||""));
+}
+function typeLabel(){ return curType === "in" ? "入库" : curType === "out" ? "出库" : "全部"; }
+function supplyLabel(){
+  if(curSupplyId === "all") return "全部物资";
+  const s = supplies.find(x=>String(x.id)===curSupplyId);
+  return s ? s.name : "全部物资";
+}
+/* 当前查询条件文案（用于明细标题） */
+function condText(){
+  if(curMode !== "all") return `类型：${typeLabel()}`;
+  const arr = [`物资：${supplyLabel()}`];
+  if(curSupType) arr.push(`农资类型：${curSupType}`);
+  if(curSupName) arr.push(`农资名称含「${curSupName}」`);
+  if(curSupCode) arr.push(`农资编码含「${curSupCode}」`);
+  arr.push(`类型：${typeLabel()}`);
+  return arr.join(" ｜ ");
+}
+function fillSupplyOptions(){
+  const sel = document.getElementById("dSupply"); if(!sel) return;
+  sel.innerHTML = `<option value="all">全部物资</option>` +
+    supplies.map(s=>`<option value="${s.id}">${s.name}（${s.code}）</option>`).join("");
+  sel.value = curSupplyId;
+  if(sel.value !== curSupplyId){ curSupplyId = "all"; sel.value = "all"; }   // 物资被删除后回退到全部物资
+}
+function syncFilterInputs(){
   document.getElementById("dStart").value = curRange.start;
   document.getElementById("dEnd").value   = curRange.end;
+  document.getElementById("dType").value  = curType;
+  fillSupplyOptions();
+  document.getElementById("dSupType").value = curSupType;
+  document.getElementById("dSupName").value = curSupName;
+  document.getElementById("dSupCode").value = curSupCode;
+  // 物资 / 农资类型 / 农资名称 / 农资编码 只在「全部物资」模式下出现
+  document.getElementById("dAllFilterWrap").style.display = curMode === "all" ? "inline-flex" : "none";
 }
+/* 单物资记录：从列表行「出入库记录」进入 */
 function openDrawer(id){
+  curMode = "single";
   curSupply = supplies.find(x=>x.id===id);
   if(!curRange) curRange = yearRange();   // 默认本年度：1月1日 ~ 12月31日
-  syncDateInputs();
+  curPage = 1;                            // 每次打开从第 1 页开始
+  syncFilterInputs();
   renderDrawer();
   show("mask"); document.getElementById("drawer").classList.add("open");
 }
-function applyDate(){
+/* 全部物资记录：从工具栏「出入库记录」进入 */
+function openAllDrawer(){
+  curMode = "all";
+  curSupply = null;
+  if(!curRange) curRange = yearRange();
+  curPage = 1;
+  syncFilterInputs();
+  renderDrawer();
+  show("mask"); document.getElementById("drawer").classList.add("open");
+}
+function applyQuery(){
   const st = document.getElementById("dStart").value, en = document.getElementById("dEnd").value;
   if(st && en && st > en) return toast("开始日期不能晚于结束日期");
   curRange = { start:st, end:en };
+  curType  = document.getElementById("dType").value || "";   // 全部 / 出库(out) / 入库(in)
+  if(curMode === "all"){                                     // 全部物资模式下的物资维度条件
+    curSupplyId = document.getElementById("dSupply").value || "all";
+    curSupType  = document.getElementById("dSupType").value || "";
+    curSupName  = document.getElementById("dSupName").value.trim();
+    curSupCode  = document.getElementById("dSupCode").value.trim();
+  }
+  curPage = 1;                            // 查询条件变化后回到第 1 页
   renderDrawer();
 }
-function resetDate(){
-  curRange = yearRange(); syncDateInputs(); renderDrawer();
-  toast(`已重置为本年度 ${curRange.start} ~ ${curRange.end}`);
+function resetQuery(){
+  curRange = yearRange(); curType = ""; curPage = 1;
+  curSupplyId = "all"; curSupType = ""; curSupName = ""; curSupCode = "";
+  syncFilterInputs(); renderDrawer();
+  toast(`已重置为本年度 ${curRange.start} ~ ${curRange.end}，类型：全部${curMode==="all" ? "，物资 / 农资类型 / 名称 / 编码：全部" : ""}`);
+}
+/* ================= 出入库记录导出 ================= */
+/* 导出字段：类型 / 农资名称 / 农资编码 / 农资类型 / 规格 / 单价 / 数量 / 库存单位 / 时间 / 操作人 */
+function openExportModal(){
+  const items = detailList();                       // 与明细列表同源：受当前查询条件影响
+  if(!items.length) return toast("当前查询条件下没有可导出的出入库记录");
+  const rows = items.slice(0, 6);                   // 弹窗内预览前 6 条
+  document.getElementById("expTip").innerHTML =
+    `按当前查询条件共 <b>${items.length}</b> 条记录，下方预览前 <b>${rows.length}</b> 条（按时间倒序）；点击「确认导出」导出全部 ${items.length} 条为 CSV 文件，可用 Excel 打开。`;
+  const trs = rows.map(({s, r})=>`
+      <tr>
+        <td><span class="badge ${r.type}">${r.type==="in"?"入库":"出库"}</span></td>
+        <td class="exp-name">${s.name}</td>
+        <td>${s.code}</td>
+        <td>${s.type}</td>
+        <td>${s.spec}</td>
+        <td>${fmt(s.price)}元</td>
+        <td>${fmt(s.stock)}</td>
+        <td>${s.unit}</td>
+        <td>${r.time||"—"}</td>
+        <td>${r.person}</td>
+      </tr>`).join("");
+  document.getElementById("expTable").innerHTML = `
+    <thead><tr><th>类型</th><th>农资名称</th><th>农资编码</th><th>农资类型</th><th>规格</th><th>单价</th><th>数量</th><th>库存单位</th><th>时间</th><th>操作人</th></tr></thead>
+    <tbody>${trs}</tbody>`;
+  show("exportModal");
+}
+function doExport(){
+  const items = detailList();
+  if(!items.length) return toast("当前查询条件下没有可导出的出入库记录");
+  const esc = v => `"${String(v==null?"":v).replaceAll('"','""')}"`;
+  const lines = [["类型","农资名称","农资编码","农资类型","规格","单价(元)","库存量","库存单位","时间","操作人"].map(esc).join(",")];
+  items.forEach(({s, r})=>lines.push([
+    r.type==="in"?"入库":"出库", s.name, s.code, s.type, s.spec,
+    fmt(s.price), fmt(s.stock), s.unit, r.time||"", r.person
+  ].map(esc).join(",")));
+  const namePart = (curMode==="all") ? "全部物资" : (curSupply ? curSupply.name : "出入库记录");
+  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type:"text/xlsx;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `出入库记录_${namePart}_${new Date().toISOString().slice(0,10)}.xlsx`;
+  document.body.appendChild(a); a.click(); a.remove();
+  hide("exportModal");
+  toast(`已导出 ${items.length} 条出入库记录`);
+}
+/* ================= 明细分页 ================= */
+function pageCountOf(){ return Math.max(1, Math.ceil(detailList().length / pageSize)); }
+function goPage(n){
+  const pc = pageCountOf();
+  curPage = Math.min(Math.max(1, n), pc);   // 越界自动收敛到首/末页
+  renderDrawer();
+}
+function setPageSize(v){ pageSize = +v; curPage = 1; renderDrawer(); }
+function pagerHtml(total, pageCount){
+  const from = (curPage-1)*pageSize + 1, to = Math.min(curPage*pageSize, total);
+  // 页码窗口：最多 5 个，居中跟随当前页
+  const start = pageCount <= 5 ? 1 : Math.min(Math.max(1, curPage-2), pageCount-4);
+  const nums = [...Array(Math.min(5, pageCount))].map((_,i)=>start+i);
+  return `
+    <div class="pg-info">明细共 <b>${total}</b> 条 ｜ 当前显示第 ${from}-${to} 条 ｜ 第 <b>${curPage}</b> / ${pageCount} 页</div>
+    <div class="pg-right">
+      <span>每页</span>
+      <select onchange="setPageSize(this.value)">
+        ${[10,20,50,100].map(v=>`<option value="${v}"${v===pageSize?" selected":""}>${v} 条</option>`).join("")}
+      </select>
+      <button class="pg-btn" onclick="goPage(1)" ${curPage===1?"disabled":""}>首页</button>
+      <button class="pg-btn" onclick="goPage(${curPage-1})" ${curPage===1?"disabled":""}>上一页</button>
+      ${nums.map(n=>`<button class="pg-btn pg-num${n===curPage?" active":""}" onclick="goPage(${n})">${n}</button>`).join("")}
+      <button class="pg-btn" onclick="goPage(${curPage+1})" ${curPage===pageCount?"disabled":""}>下一页</button>
+      <button class="pg-btn" onclick="goPage(${pageCount})" ${curPage===pageCount?"disabled":""}>末页</button>
+    </div>`;
 }
 function renderDrawer(){
-  const s = curSupply; if(!s) return;
-  const all  = [...s.records].sort((a,b)=> (b.time||"").localeCompare(a.time||""));  // 时间降序（全量）
-  const recs = all.filter(inRange);                                                  // 日期区间只筛选明细列表
-  const inQ = recSum(all,"in"), outQ = recSum(all,"out");   // 统计不受日期区间影响，始终为全量
-  document.getElementById("dTitle").textContent = `${s.name} — 出入库记录`;
-  document.getElementById("dSub").textContent = `编码 ${s.code} ｜ 规格 ${s.spec} ｜ 单价 ${fmt(s.price)}元/${s.unit}`;
-  const yr = yearRange();
-  const isDefault = curRange.start === yr.start && curRange.end === yr.end;
-  
-  document.getElementById("dListTitle").textContent =
-    `出入库明细（${curRange.start||"不限"} ~ ${curRange.end||"不限"}，按时间倒序，点击记录展开地块分摊）`;
-  document.getElementById("dStats").innerHTML = `
-    <div class="d-stat"><div class="l">总入库</div><div class="v" style="color:#00a870">${fmt(inQ)}${s.unit}</div></div>
-    <div class="d-stat"><div class="l">总支取</div><div class="v" style="color:#ff8f1f">${fmt(outQ)}${s.unit}</div></div>
-    <div class="d-stat"><div class="l">当前库存</div><div class="v" style="color:#2f7bff">${fmt(s.stock)}${s.unit}</div></div>
-    <div class="d-stat"><div class="l">入库总金额</div><div class="v" style="color:#00a870">¥${fmt(recAmount(all,"in"))}</div></div>
-    <div class="d-stat"><div class="l">支取总金额</div><div class="v" style="color:#ff8f1f">¥${fmt(recAmount(all,"out"))}</div></div>`;
-  document.getElementById("dRecords").innerHTML = recs.length ? recs.map((r,i)=>{
+  const items = detailList();                     // 明细：日期 + 类型 + 物资 筛选后的结果集
+  // 分页：明细按页切片展示（统计仍为全量口径，不受分页与筛选影响）
+  const totalRecs = items.length;
+  const pageCount = Math.max(1, Math.ceil(totalRecs / pageSize));
+  if(curPage > pageCount) curPage = pageCount;
+  if(curPage < 1) curPage = 1;
+  const pageItems = items.slice((curPage - 1) * pageSize, curPage * pageSize);
+  const source    = sourceOf();                   // 全量（未筛选）
+  const countTxt  = totalRecs > pageSize ? `共 ${totalRecs} 条，分 ${pageCount} 页展示` : `共 ${totalRecs} 条`;
+
+  if(curMode === "all"){
+    /* ---------- 全部物资 ---------- */
+    document.getElementById("dTitle").textContent = "全部物资 — 出入库记录";
+    document.getElementById("dSub").textContent =
+      ``;
+    document.getElementById("dListTitle").textContent =
+      `出入库明细`;
+    // 各物资单位不同（袋/瓶/辆），数量不能相加 → 全部物资模式统计按「条数 + 金额」口径
+    const inCnt  = source.filter(i=>i.r.type==="in").length;
+    const outCnt = source.filter(i=>i.r.type==="out").length;
+    const inAmt  = source.reduce((a,i)=> i.r.type==="in"  ? a + i.r.qty*i.r.price : a, 0);
+    const outAmt = source.reduce((a,i)=> i.r.type==="out" ? a + i.r.qty*i.r.price : a, 0);
+    document.getElementById("dStats").innerHTML = `
+      <div class="d-stat"><div class="l">入库次数</div><div class="v" style="color:#00a870">${inCnt}</div></div>
+      <div class="d-stat"><div class="l">出库次数</div><div class="v" style="color:#ff8f1f">${outCnt}</div></div>
+      <div class="d-stat"><div class="l">入库金额</div><div class="v" style="color:#00a870">¥${fmt(inAmt)}</div></div>
+      <div class="d-stat"><div class="l">出库金额</div><div class="v" style="color:#ff8f1f">¥${fmt(outAmt)}</div></div>`;
+  } else {
+    /* ---------- 单个物资 ---------- */
+    const s = curSupply; if(!s) return;
+    const all = source.map(i=>i.r);   // 该物资全量记录（统计不受查询条件影响）
+    document.getElementById("dTitle").textContent = `${s.name} — 出入库记录`;
+    document.getElementById("dSub").textContent = `编码 ${s.code} ｜ 规格 ${s.spec} ｜ 单价 ${fmt(s.price)}元/${s.unit}`;
+    document.getElementById("dListTitle").textContent =
+      `出入库明细`;
+    document.getElementById("dStats").innerHTML = `
+      <div class="d-stat"><div class="l">入库</div><div class="v" style="color:#00a870">${fmt(recSum(all,"in"))}${s.unit}</div></div>
+      <div class="d-stat"><div class="l">出库</div><div class="v" style="color:#ff8f1f">${fmt(recSum(all,"out"))}${s.unit}</div></div>
+      <div class="d-stat"><div class="l">入库金额</div><div class="v" style="color:#00a870">¥${fmt(recAmount(all,"in"))}</div></div>
+      <div class="d-stat"><div class="l">出库金额</div><div class="v" style="color:#ff8f1f">¥${fmt(recAmount(all,"out"))}</div></div>`;
+  }
+
+  // 明细汇总涉及的农资名称（仅全部物资模式；名称较长时完整换行展示）
+  const supNames = [...new Set(items.map(i=>i.s.name))];
+  document.getElementById("dSupSummary").innerHTML = "";
+
+  document.getElementById("dRecords").innerHTML = totalRecs ? pageItems.map(({s, r})=>{
     const plots = splitPlots(r);
     const plotRows = plots.map(p=>`
       <tr>
-        <td>${p.name}${p.crop?`<span class="crop-tag">${p.crop}</span>`:''}</td>
+        <td><span class="plot-cell"><span class="pname">${p.name}</span>${p.crop?`<span class="crop-tag">${p.crop}</span>`:''}${p.variety?`<span class="variety-tag">${p.variety}</span>`:''}</span></td>
         <td>${fmt(p.mu)} 亩</td>
         <td>${p.ratio.toFixed(1)}%</td>
         <td style="font-weight:600;color:#ff8f1f">${fmt(p.qty)} ${s.unit}</td>
         <td style="font-weight:600">¥ ${fmt(p.amount)}</td>
       </tr>`).join("");
     const plotBlock = (r.type==="out" && plots.length) ? `
-      <div class="plot-title">支取地块分摊（按地块亩数占比划分）</div>
-      <table class="plot-table">
-        <thead><tr><th>地块名称（作物）</th><th>亩数</th><th>亩数占比</th><th>分摊支取数量</th><th>分摊支取金额</th></tr></thead>
-        <tbody>${plotRows}
-          <tr class="sum"><td>合计</td><td>${fmt(plots.reduce((a,p)=>a+p.mu,0))} 亩</td><td>100%</td><td>${fmt(r.qty)} ${s.unit}</td><td>¥ ${fmt(r.qty*r.price)}</td></tr>
-        </tbody>
-      </table>
-      <div class="mu-note">＊ 分摊规则：各地块分摊数量 = 支取总数量 ×（该地块亩数 ÷ 所选地块总亩数），金额 = 分摊数量 × 单价 ${fmt(r.price)}元/${s.unit}</div>` : "";
+      <div class="plot-title">出库地块详情（共 ${plots.length} 个地块）</div>
+      <div class="plot-scroll">
+        <table class="plot-table">
+          <thead><tr><th>地块名称</th><th>亩数</th><th>亩数占比</th><th>分摊出库数量</th><th>分摊出库金额</th></tr></thead>
+          <tbody>${plotRows}
+          </tbody>
+        </table>
+      </div>` : "";
+    // 明细信息（经手人 / 时间 / 数量×单价 / 金额）
+    const infoSpans = `
+        <span class="r-person">${r.person}${r.category?` - ${r.category}`:''}</span>
+        <span class="r-time">🕐 ${r.time||"—"}</span>
+        <span class="r-field">${fmt(r.qty)} ${s.unit} × ${fmt(r.price)}元/${s.unit}</span>
+        <span class="r-amt ${r.type}">${r.type==="in"?"+":"-"}¥ ${fmt(r.qty*r.price)}</span>`;
+    // 全部物资模式：第一行「农资名称 - 农资编码」，第二行其他信息；单物资模式保持单行
+    const headHtml = curMode === "all" ? `
+        <div class="ln1">
+          <span class="r-arrow">▶</span>
+          <span class="sup-chip">${s.name}<span class="sep">-</span><span class="code">${s.code}</span></span>
+        </div>
+        <div class="ln2">
+          <span class="badge ${r.type}">${r.type==="in"?"入库":"出库"}</span>${infoSpans}
+        </div>` : `
+        <div class="ln1">
+          <span class="r-arrow">▶</span>
+          <span class="badge ${r.type}">${r.type==="in"?"入库":"出库"}</span>${infoSpans}
+        </div>`;
     return `
     <div class="record" onclick="this.classList.toggle('open')">
-      <div class="record-head">
-        <span class="r-arrow">▶</span>
-        <span class="badge ${r.type}">${r.type==="in"?"入库":"支取"}</span>
-        <span class="r-person">${r.person}</span>
-        <span class="r-field">${fmt(r.qty)} ${s.unit} × ${fmt(r.price)}元/${s.unit}</span>
-        <span class="r-amt ${r.type}">${r.type==="in"?"+":"-"}¥ ${fmt(r.qty*r.price)}</span>
+      <div class="record-head">${headHtml}
       </div>
       <div class="record-body">
-        <div class="record-meta">时间：${r.time} ｜ 备注：${r.note||"—"}</div>
+        <div class="record-meta">${r.type==="in" ? "备注" : "农事描述"}：${r.note||"—"}</div>
         ${plotBlock}
       </div>
     </div>`;
-  }).join("") : `<div style="text-align:center;color:#999;padding:40px">${all.length ? "该日期区间内暂无出入库记录，可调整日期后重新查询" : "暂无出入库记录"}</div>`;
+  }).join("") : `<div style="text-align:center;color:#999;padding:40px">${source.length ? "该查询条件下暂无出入库记录，可调整日期、类型或物资后重新查询" : "暂无出入库记录"}</div>`;
+  document.getElementById("dPager").innerHTML = totalRecs ? pagerHtml(totalRecs, pageCount) : "";
+  if(curPage > 1){ const t = document.getElementById("dListTitle"); if(t && t.scrollIntoView) t.scrollIntoView({ block:"start" }); }
 }
 function closeDrawer(){
   document.getElementById("drawer").classList.remove("open");
@@ -474,10 +810,17 @@ function openAdd(){ show("addModal"); }
 function saveAdd(){
   const name=document.getElementById("aName").value.trim();
   if(!name) return toast("请输入名称");
+  // 规格 = 规格值 + 计量单位 / 包装单位（如 50公斤/袋），包装单位同时作为库存单位
+  const specVal=document.getElementById("aSpec").value.trim();
+  const specUnit=document.getElementById("aSpecUnit").value;
+  const specPkg=document.getElementById("aSpecPkg").value;
+  if(!specVal) return toast("请输入规格值");
+  if(!specUnit) return toast("请选择计量单位");
+  if(!specPkg) return toast("请选择包装单位");
   supplies.unshift({
     id:++uid, name, code:document.getElementById("aCode").value.trim()||name,
     type:document.getElementById("aType").value||"其他",
-    spec:document.getElementById("aSpec").value.trim()||"—", unit:"袋",
+    spec:`${specVal}${specUnit}/${specPkg}`, unit:specPkg,
     price:+document.getElementById("aPrice").value||0,
     stock:+document.getElementById("aStock").value||0,
     note:document.getElementById("aNote").value.trim(), img:false, records:[]
