@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>种植档案 - 自动归档演示</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif; background:#f5f7f6; color:#333; font-size:14px; }
+  /* 顶部栏 */
+  .topbar { background:#fff; height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid #eee; }
+  .topbar .nav { display:flex; align-items:center; gap:28px; height:100%; font-size:14px; }
+  .topbar .nav a { display:flex; align-items:center; gap:7px; height:100%; color:#666; text-decoration:none; border-bottom:2.5px solid transparent; padding:0 2px; cursor:pointer; }
+  .topbar .nav a:hover { color:#00a870; }
+  .topbar .nav a.active { color:#00a870; font-weight:600; border-bottom-color:#00a870; }
+  .topbar .nav .dot { width:16px; height:16px; border-radius:3px; background:#00a870; display:inline-block; flex-shrink:0; }
+  .topbar .right { color:#555; font-size:13px; display:flex; align-items:center; gap:14px; }
+  .topbar .right .avatar { width:26px; height:26px; border-radius:50%; background:#00a870; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:12px; }
+  /* 页面标题区 */
+  .page-head { background:linear-gradient(135deg,#00a870,#008f5f); color:#fff; padding:18px 28px; }
+  .page-head h1 { font-size:20px; font-weight:600; }
+  .page-head p { font-size:12px; opacity:.85; margin-top:4px; }
+  .container { max-width:1280px; margin:0 auto; padding:16px 20px 40px; }
+  /* 汇总卡片 */
+  .stat-cards { display:flex; gap:14px; margin-bottom:16px; flex-wrap:wrap; }
+  .stat-card { background:#fff; border-radius:8px; padding:14px 20px; flex:1; min-width:170px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+  .stat-card .label { color:#888; font-size:12px; }
+  .stat-card .value { font-size:22px; font-weight:700; margin-top:4px; }
+  .stat-card .value.green { color:#00a870; }
+  .stat-card .value.orange { color:#ff8f1f; }
+  .stat-card .value.blue { color:#2f7bff; }
+  /* 归档规则说明 */
+  .archive-note { background:#e8f7f1; border:1px solid #bfe8d6; border-radius:8px; padding:10px 16px; margin-bottom:16px; color:#007951; font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .archive-note b { color:#00563a; }
+  .archive-note .tag-auto { background:#00a870; color:#fff; border-radius:3px; padding:1px 8px; font-size:12px; }
+  /* 工具栏 */
+  .toolbar { background:#fff; border-radius:8px; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+  .toolbar label { color:#555; }
+  select, input[type=text], input[type=number] { border:1px solid #dcdfe6; border-radius:4px; padding:7px 10px; font-size:13px; outline:none; font-family:inherit; background:#fff; }
+  select:focus, input:focus { border-color:#00a870; }
+  .btn { border:none; border-radius:4px; padding:8px 16px; cursor:pointer; font-size:13px; transition:.15s; }
+  .btn-primary { background:#00a870; color:#fff; }
+  .btn-primary:hover { background:#009164; }
+  .btn-plain { background:#fff; border:1px solid #00a870; color:#00a870; }
+  .btn-plain:hover { background:#e8f7f1; }
+  /* 表格 */
+  .table-wrap { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.05); overflow:auto; }
+  table { width:100%; border-collapse:collapse; min-width:1240px; }
+  th { background:#fafafa; color:#666; font-weight:600; text-align:left; padding:12px 14px; border-bottom:1px solid #ebeef5; white-space:nowrap; }
+  td { padding:12px 14px; border-bottom:1px solid #f2f3f5; vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tbody tr:hover { background:#f7fbf9; }
+  .code-link { color:#00a870; font-weight:600; cursor:pointer; }
+  .code-link:hover { text-decoration:underline; }
+  .op-link { color:#00a870; cursor:pointer; margin-right:12px; white-space:nowrap; }
+  .op-link:hover { text-decoration:underline; }
+  .tag { display:inline-block; padding:2px 10px; border-radius:10px; font-size:12px; }
+  .tag-wheat { background:#fbf3e2; color:#b8860b; }
+  .tag-chili { background:#fdeaea; color:#d64545; }
+  .tag-corn { background:#fff3df; color:#c77c0d; }
+  .tag-done { background:#e8f7f1; color:#00a870; }
+  .pager { display:flex; justify-content:flex-end; align-items:center; gap:8px; padding:12px 16px; color:#666; font-size:13px; }
+  .pager .pg { min-width:26px; height:26px; border:1px solid #dcdfe6; border-radius:4px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; background:#fff; }
+  .pager .pg.active { background:#00a870; color:#fff; border-color:#00a870; }
+  /* 抽屉（档案详情） */
+  .mask { position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; z-index:90; }
+  .drawer { position:fixed; top:0; right:-820px; width:820px; max-width:96vw; height:100vh; background:#f7f9f8; z-index:100; transition:right .25s ease; display:flex; flex-direction:column; box-shadow:-4px 0 16px rgba(0,0,0,.12); }
+  .drawer.open { right:0; }
+  .drawer-head { background:#fff; padding:14px 22px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
+  .drawer-head h3 { font-size:16px; }
+  .drawer-head .sub { color:#999; font-size:12px; margin-top:3px; }
+  .close-x { cursor:pointer; color:#999; font-size:20px; line-height:1; }
+  .close-x:hover { color:#333; }
+  .drawer-body { flex:1; overflow-y:auto; overflow-x:hidden; padding:16px 22px 30px; }
+  /* 档案头卡片（仿种植详情弹窗） */
+  .arch-head { background:#fff; border-radius:8px; border-left:4px solid #00a870; padding:16px 20px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+  .arch-head h2 { font-size:18px; font-weight:700; }
+  .arch-head h2 .area { color:#00a870; }
+  .arch-head .row { margin-top:8px; font-size:13.5px; color:#444; }
+  .arch-head .row b { color:#00a870; font-weight:600; }
+  .arch-head .row .lbl { color:#888; margin-right:6px; }
+  .arch-tabs { display:flex; background:#fff; border-radius:8px 8px 0 0; margin-top:14px; border-bottom:1px solid #eee; padding:0 10px; }
+  .arch-tab { padding:12px 22px; cursor:pointer; font-size:14px; color:#666; border-bottom:2px solid transparent; }
+  .arch-tab.active { color:#00a870; font-weight:600; border-bottom-color:#00a870; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  /* 完成度 */
+  .progress-line { background:#fff; border-radius:8px; padding:12px 16px; margin-bottom:12px; display:flex; align-items:center; gap:12px; border:1px solid #eef0ef; }
+  .progress-line .bar { flex:1; height:8px; background:#eef1ef; border-radius:4px; overflow:hidden; }
+  .progress-line .bar i { display:block; height:100%; background:linear-gradient(90deg,#00a870,#3ecf95); border-radius:4px; }
+  .progress-line .txt { color:#666; font-size:13px; white-space:nowrap; }
+  /* 农事环节卡片 */
+  .stage { background:#fff; border-radius:8px; border:1px solid #eef0ef; margin-bottom:10px; padding:12px 16px; cursor:pointer; }
+  .stage:hover { border-color:#bfe8d6; box-shadow:0 2px 8px rgba(0,168,112,.10); }
+  .stage-top { display:flex; align-items:center; gap:10px; }
+  .badge { padding:2px 10px; border-radius:3px; color:#fff; font-size:12px; white-space:nowrap; }
+  .badge.done { background:#00a870; }
+  .badge.todo { background:#f56c6c; }
+  .stage-name { font-weight:700; font-size:14.5px; }
+  .stage-date { margin-left:auto; color:#888; font-size:12.5px; }
+  .stage-costs { margin-top:8px; padding-top:8px; border-top:1px dashed #e5e8e6; font-size:13px; color:#555; }
+  .stage-costs .line { display:flex; justify-content:space-between; padding:2px 0; }
+  .stage-costs .line .k { color:#777; }
+  .stage-costs .line .v { color:#444; }
+  .stage-costs .sum { margin-top:6px; padding-top:6px; border-top:1px solid #f0f2f1; font-weight:700; color:#00a870; display:flex; justify-content:space-between; }
+  .stage-costs .sum .per { font-weight:400; color:#00a870; font-size:12.5px; }
+  .stage.todo .stage-costs { color:#999; }
+  /* 投入分析 */
+  .ana-card { background:#fff; border-radius:8px; border:1px solid #eef0ef; padding:14px 18px; margin-bottom:12px; }
+  .ana-card h4 { font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .ana-card h4::before { content:""; width:3px; height:13px; background:#00a870; border-radius:2px; display:inline-block; }
+  .ana-total { display:flex; gap:30px; flex-wrap:wrap; }
+  .ana-total .item .l { color:#888; font-size:12px; }
+  .ana-total .item .v { font-size:20px; font-weight:700; color:#00a870; margin-top:2px; }
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; font-size:12.5px; }
+  .bar-row .bl { width:88px; color:#666; text-align:right; flex-shrink:0; }
+  .bar-row .btrack { flex:1; height:14px; background:#f2f4f3; border-radius:7px; overflow:hidden; }
+  .bar-row .btrack i { display:block; height:100%; border-radius:7px; }
+  .bar-row .bv { width:200px; color:#555; white-space:nowrap; }
+  /* 投入分析：环形图版式 */
+  .ana-headline { font-size:14.5px; color:#333; margin-bottom:8px; }
+  .ana-headline .money { color:#ff6a2b; font-size:20px; font-weight:700; }
+  .ana-headline .per { color:#ff6a2b; font-weight:600; margin-left:10px; }
+  .legend { display:flex; gap:20px; justify-content:center; margin:2px 0 12px; font-size:12.5px; color:#555; flex-wrap:wrap; }
+  .legend .lg { display:inline-flex; align-items:center; gap:6px; }
+  .legend .lg i { width:22px; height:12px; border-radius:3px; display:inline-block; }
+  .cat-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .cat-table th { background:#f5faf7; padding:8px 12px; color:#556; font-weight:600; text-align:left; }
+  .cat-table td { padding:8px 12px; border-bottom:1px solid #f0f2f1; color:#444; }
+  .cat-chip { display:inline-block; border-radius:4px; padding:3px 14px; font-size:12.5px; font-weight:600; }
+  /* 农事详情弹窗 */
+  .modal-mask { position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:200; display:none; align-items:flex-start; justify-content:center; }
+  .modal { background:#fff; border-radius:8px; width:560px; max-width:92vw; margin-top:7vh; max-height:86vh; overflow-y:auto; }
+  .modal-head { display:flex; justify-content:space-between; align-items:center; padding:16px 22px; border-bottom:1px solid #f0f0f0; }
+  .modal-head h3 { font-size:15px; }
+  .modal-body { padding:18px 26px; }
+  .d-row { display:flex; margin-bottom:13px; }
+  .d-row .dl { width:92px; color:#888; flex-shrink:0; }
+  .d-row .dv { flex:1; color:#333; }
+  .d-row .dv .ok { color:#00a870; }
+  .chip { display:inline-block; background:#f2f7f4; border:1px solid #dcefe6; color:#007951; border-radius:4px; padding:3px 12px; font-size:12.5px; margin:0 8px 6px 0; }
+  .img-ph { display:inline-flex; width:64px; height:48px; background:#eef2f0; border-radius:4px; align-items:center; justify-content:center; color:#b8c4be; font-size:11px; margin-right:8px; }
+  .modal-foot { padding:12px 24px 20px; text-align:right; }
+  .toast { position:fixed; top:60px; left:50%; transform:translateX(-50%); background:#00a870; color:#fff; padding:10px 22px; border-radius:6px; z-index:300; display:none; box-shadow:0 4px 14px rgba(0,168,112,.4); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <nav class="nav">
+    <a href="stock.html"><span class="dot" style="background:#c9d6d0"></span>农资管理</a>
+    <a class="active"><span class="dot"></span>种植档案</a>
+  </nav>
+  <div class="right"><span>五莲于里农场</span><span class="avatar">X</span><span>XX</span></div>
+</div>
+
+<!-- 地块形状图标用的渐变定义（全局一次） -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="plotGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5ecb52"/>
+      <stop offset="1" stop-color="#1e9e3e"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="page-head">
+  <h1>种植档案</h1>
+  <p>种植批次状态变为「种植结束」后自动归档至此 ｜ 档案固化农艺方案执行过程与投入成本，只读可溯</p>
+</div>
+
+<div class="container">
+  <!-- 平台汇总 -->
+  <div class="stat-cards" id="statCards"></div>
+
+  <!-- 归档规则 
+  <div class="archive-note">
+    <span class="tag-auto">自动归档</span>
+    <span>规则：<b>种植植物管理</b>中的批次状态更新为「种植结束」时，系统自动生成档案（编号规则 <b>ZDA-年度-流水号</b>），固化农艺方案、农事执行记录与投入成本；档案<b>只读</b>，如需修改请回到种植植物管理编辑后重新归档。</span>
+  </div>-->
+
+  <!-- 筛选栏 -->
+  <div class="toolbar">
+    
+    <label style="margin-left:8px">地块：</label>
+	<input type="text" id="fPlot" placeholder="请输入地块名称" style="width:150px" >
+    <label style="margin-left:8px">归档年度：</label>
+    <select id="fYear" style="width:120px" onchange="renderTable()">
+      <option value="">全部年度</option>
+    </select>
+	<label>种植物：</label>
+    <select id="fCrop" style="width:140px" onchange="renderTable()">
+      <option value="">请选择种植作物</option>
+    </select>
+    
+    <button class="btn btn-primary" onclick="renderTable()">查询</button>
+    <button class="btn btn-plain" onclick="resetFilter()">重置</button>
+  </div>
+
+  <!-- 档案列表 -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>档案编号</th><th>地块</th><th>作物</th><th>农艺方案</th><th>面积(亩)</th>
+          <th>种植时间</th><th>结束时间</th><th>生长周期</th><th>农事完成</th><th>总投入成本</th><th>亩均成本</th><th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="pager">
+      <span id="pagerInfo"></span>
+      <span class="pg active">1</span>
+      <select style="padding:4px 6px"><option>10条/页</option></select>
+    </div>
+  </div>
+</div>
+
+<!-- 档案详情抽屉 -->
+<div class="mask" id="mask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <h3 id="dTitle">种植档案详情</h3>
+      <div class="sub" id="dSub"></div>
+    </div>
+    <span class="close-x" onclick="closeDrawer()">✕</span>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<!-- 农事详情弹窗 -->
+<div class="modal-mask" id="stageModal">
+  <div class="modal">
+    <div class="modal-head"><h3>农事详情</h3><span class="close-x" onclick="hide('stageModal')">✕</span></div>
+    <div class="modal-body" id="stageBody"></div>
+    <div class="modal-foot"><button class="btn btn-plain" onclick="hide('stageModal')">关 闭</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 演示数据（种植结束后自动归档） ================= */
+let uid = 100;
+const archives = [
+  {
+    id:1, code:"XJNC-2025-001", plan:"小麦农艺-2024", crop:"小麦", variety:"济麦22",
+    plot:"前后莲池片区-1", addr:"于里镇前莲池村", area:1110.09,
+    startDate:"2025-02-18", endDate:"2025-06-18", operator:"马萌",
+    stages:[
+      { name:"旋耕", status:"done", date:"2月1日 ~ 2月1日", costs:{m:2100}, code:"NS20250201-001", approve:"马萌于 2025-02-01 18:20:11 通过。", desc:"播种前旋耕整地，耕深 20cm，地表平整。" },
+      { name:"播种", status:"done", date:"2月1日 ~ 2月1日", costs:{o:100, a:4070.71, l:200, m:200}, code:"NS20250201-002", approve:"马萌于 2025-02-02 09:12:00 通过。", desc:"机播济麦22，亩播量 12.5kg，播后镇压。" },
+      { name:"出苗水", status:"done", date:"2月2日 ~ 2月2日", costs:{l:44403.60}, code:"NS20250202-003", approve:"中国国庆于 2026-06-08 16:29:22 通过。", desc:"滴灌出苗水一遍，保证齐苗。" },
+      { name:"镇压", status:"done", date:"2月10日 ~ 2月12日", costs:{m:8880.72, l:2220.18}, code:"NS20250210-004", approve:"马萌于 2025-02-13 08:30:00 通过。", desc:"越冬前机械镇压一遍，保墒防冻。" },
+      { name:"追肥（返青肥）", status:"done", date:"3月5日 ~ 3月8日", costs:{a:55504.50, l:3330.27}, code:"NS20250305-005", approve:"中国国庆于 2026-06-08 16:29:22 通过。", desc:"返青期撒施尿素 30kg/亩，随后浇水。" },
+      { name:"一喷三防", status:"done", date:"4月20日 ~ 4月22日", costs:{a:15541.26, m:2220.18, l:1110.09}, code:"NS20250420-006", approve:"马萌于 2025-04-23 10:05:00 通过。", desc:"杀虫剂+杀菌剂+叶面肥统防统治一遍。" },
+      { name:"收获", status:"done", date:"6月15日 ~ 6月18日", costs:{m:55504.50, l:3330.27}, code:"NS20250615-007", approve:"马萌于 2025-06-19 14:00:00 通过。", desc:"联合收割机收获，亩产测产 512kg。" }
+    ]
+  },
+  {
+    id:2, code:"XJNC-2025-002", plan:"于里冬小麦麦农艺方案-2024", crop:"小麦", variety:"济麦22",
+    plot:"前后莲池片区-2", addr:"于里镇前莲池村", area:95,
+    startDate:"2025-03-18", endDate:"2025-09-02", operator:"马萌",
+    stages:[
+      { name:"旋耕", status:"done", date:"3月15日 ~ 3月15日", costs:{m:1900}, code:"NS20250315-001", approve:"马萌于 2025-03-15 17:40:00 通过。", desc:"旋耕整地一遍。" },
+      { name:"播种", status:"done", date:"3月18日 ~ 3月18日", costs:{a:3040, l:190, m:190}, code:"NS20250318-002", approve:"马萌于 2025-03-19 08:00:00 通过。", desc:"机播济麦22。" },
+      { name:"浇水", status:"done", date:"4月20日 ~ 4月20日", costs:{l:3800}, code:"NS20250420-003", approve:"中国国庆于 2026-06-08 16:29:22 通过。", desc:"拔节水一遍。" },
+      { name:"追肥", status:"done", date:"5月10日 ~ 5月11日", costs:{a:6650, l:475}, code:"NS20250510-004", approve:"马萌于 2025-05-12 09:00:00 通过。", desc:"追施尿素 25kg/亩。" },
+      { name:"收获", status:"done", date:"9月2日 ~ 9月2日", costs:{m:6650, l:475}, code:"NS20250902-005", approve:"马萌于 2025-09-02 15:09:34 通过。", desc:"机械收获完毕，地块释放。" }
+    ]
+  },
+  {
+    id:3, code:"XJNC-2025-003", plan:"小麦农艺-2024", crop:"小麦", variety:"济麦22",
+    plot:"东汀沟（三块合并）", addr:"于里镇东汀沟村", area:394,
+    startDate:"2024-12-01", endDate:"2025-03-19", operator:"张建国",
+    stages:[
+      { name:"深耕", status:"done", date:"11月25日 ~ 11月26日", costs:{m:7880}, code:"NS20241125-001", approve:"张建国于 2024-11-26 16:00:00 通过。", desc:"深耕 25cm，晒垡。" },
+      { name:"播种", status:"done", date:"12月1日 ~ 12月1日", costs:{a:15760, l:788, m:788}, code:"NS20241201-002", approve:"张建国于 2024-12-02 08:30:00 通过。", desc:"宽幅精播，亩播量 11kg。" },
+      { name:"冬灌", status:"done", date:"12月20日 ~ 12月22日", costs:{l:15760}, code:"NS20241220-003", approve:"中国国庆于 2026-06-08 16:29:22 通过。", desc:"越冬水灌溉。" },
+      { name:"追肥", status:"done", date:"2月25日 ~ 2月26日", costs:{a:19600, l:1182}, code:"NS20250225-004", approve:"张建国于 2025-02-27 09:00:00 通过。", desc:"返青追肥一遍。" },
+      { name:"一喷三防", status:"todo", date:"4月1日 ~ 4月10日（计划）", costs:{}, code:"NS20250401-005", approve:"待执行，暂未提交审核。", desc:"种植批次提前结束，该环节未执行，不计入投入。" }
+    ]
+  },
+  {
+    id:4, code:"XJNC-2026-001", plan:"再来一次方案", crop:"小麦", variety:"麦种1",
+    plot:"新增地块查看方案", addr:"于里镇（蒙的-龙）", area:56.51,
+    startDate:"2025-09-02", endDate:"2026-02-23", operator:"马萌",
+    stages:[
+      { name:"旋耕", status:"done", date:"8月28日 ~ 8月28日", costs:{m:1130.20}, code:"NS20250828-001", approve:"马萌于 2025-08-28 18:00:00 通过。", desc:"旋耕整地。" },
+      { name:"播种", status:"done", date:"9月2日 ~ 9月2日", costs:{a:2260.40, l:565.10, m:565.10}, code:"NS20250902-002", approve:"马萌于 2025-09-02 09:03:09 通过。", desc:"条播麦种1。" },
+      { name:"越冬水", status:"done", date:"11月25日 ~ 11月26日", costs:{l:2260.40}, code:"NS20251125-003", approve:"中国国庆于 2026-06-08 16:29:22 通过。", desc:"浇越冬水。" },
+      { name:"追肥", status:"done", date:"2月10日 ~ 2月11日", costs:{a:1695.30, l:565.10}, code:"NS20260210-004", approve:"马萌于 2026-02-12 08:40:00 通过。", desc:"返青追肥。" }
+    ]
+  },
+  {
+    id:5, code:"XJNC-2025-004", plan:"辣椒方案", crop:"辣椒", variety:"小米辣",
+    plot:"神辣椒的", addr:"123", area:124.46,
+    startDate:"2025-03-01", endDate:"2025-08-26", operator:"马萌",
+    stages:[
+      { name:"育苗", status:"done", date:"3月1日 ~ 3月20日", costs:{a:2489.20, l:1244.60}, code:"NS20250301-001", approve:"马萌于 2025-03-21 09:00:00 通过。", desc:"大棚集中育苗。" },
+      { name:"整地移栽", status:"done", date:"4月25日 ~ 5月5日", costs:{a:3733.80, l:4978.40, m:1244.60}, code:"NS20250425-002", approve:"中国国庆于 2026-06-08 16:29:22 通过。", desc:"起垄覆膜移栽，亩栽 2200 株。" },
+      { name:"滴灌", status:"done", date:"5月20日 ~ 5月21日", costs:{a:1244.60, l:1244.60}, code:"NS20250520-003", approve:"马萌于 2025-05-22 08:00:00 通过。", desc:"缓苗水滴灌。" },
+      { name:"病虫害防治", status:"done", date:"6月15日 ~ 7月1日", costs:{a:3733.80, m:622.30, l:622.30}, code:"NS20250615-004", approve:"马萌于 2025-07-02 10:00:00 通过。", desc:"防蚜虫、炭疽病各一遍。" },
+      { name:"采收", status:"done", date:"8月1日 ~ 8月26日", costs:{l:12446.00}, code:"NS20250801-005", approve:"马萌于 2025-08-26 14:23:48 通过。", desc:"分批采收红椒，累计采收 3 遍。" }
+    ]
+  },
+  {
+    id:6, code:"XJNC-2025-005", plan:"玉米种植", crop:"玉米", variety:"红玉米",
+    plot:"小程序已点击地块", addr:"卡机了的傲假", area:121.18,
+    startDate:"2025-07-12", endDate:"2025-10-20", operator:"王强",
+    stages:[
+      { name:"免耕播种", status:"done", date:"7月12日 ~ 7月12日", costs:{a:3635.40, m:2423.60, l:605.90}, code:"NS20250712-001", approve:"王强于 2025-07-12 18:30:00 通过。", desc:"免耕播种红玉米，亩株数 4200。" },
+      { name:"除草", status:"done", date:"7月30日 ~ 7月31日", costs:{a:1211.80, l:605.90}, code:"NS20250730-002", approve:"王强于 2025-08-01 08:00:00 通过。", desc:"苗后除草剂喷施。" },
+      { name:"穗肥", status:"done", date:"8月20日 ~ 8月21日", costs:{a:4241.30, l:605.90}, code:"NS20250820-003", approve:"中国国庆于 2026-06-08 16:29:22 通过。", desc:"大喇叭口期追穗肥。" },
+      { name:"收获", status:"done", date:"10月18日 ~ 10月20日", costs:{m:6059.00, l:1211.80}, code:"NS20251018-004", approve:"王强于 2025-10-20 17:00:00 通过。", desc:"机械收穗，晾晒入库。" }
+    ]
+  }
+];
+
+/* ================= 工具函数 ================= */
+const fmt = n => (Math.round(n*100)/100).toLocaleString("zh-CN", {maximumFractionDigits:2});
+const fmt2 = n => (Math.round(n*100)/100).toLocaleString("zh-CN", {minimumFractionDigits:2, maximumFractionDigits:2}); // 金额固定两位小数
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display="none",2200); }
+function hide(id){ document.getElementById(id).style.display="none"; }
+function show(id){ document.getElementById(id).style.display="flex"; }
+function stageTotal(st){ const c = st.costs||{}; return (c.o||0)+(c.a||0)+(c.l||0)+(c.m||0); }
+function archTotal(a){ return a.stages.reduce((s,st)=>s+stageTotal(st),0); }
+function doneCount(a){ return a.stages.filter(s=>s.status==="done").length; }
+function days(a){ return Math.max(1, Math.round((new Date(a.endDate) - new Date(a.startDate))/86400000)); }
+function cropTag(crop){ const cls = crop==="小麦" ? "tag-wheat" : crop==="辣椒" ? "tag-chili" : "tag-corn"; return `<span class="tag ${cls}">${crop}</span>`; }
+
+/* 地块形状图标：青色边框小框 + 渐变绿色多边形（模拟地块轮廓，按档案轮换形状） */
+const PLOT_SHAPES = [
+  "5,16 10,5 23,4 24,17",          // 类似截图的不规则四边形
+  "4,15 9,4 21,6 24,16",           // 左低右高四边形
+  "4,7 17,3 24,11 21,18 6,18",     // 五边形
+  "6,4 22,6 20,17 8,19"            // 平行四边形
+];
+function plotShape(a){
+  const pts = PLOT_SHAPES[(a.id||0) % PLOT_SHAPES.length];
+  return `<svg class="plot-shape" viewBox="0 0 28 22" width="22" height="17" style="vertical-align:-3px;margin-right:5px"><rect x="1" y="1" width="26" height="20" fill="#fff" stroke="#2aa79f" stroke-width="1.5" rx="1"/><polygon points="${pts}" fill="url(#plotGrad)" stroke="#1d7f35" stroke-width="0.6"/></svg>`;
+}
+function catLines(st, area){
+  const c = st.costs||{}, map = [["o","其他成本"],["a","农资成本"],["l","人工成本"],["m","农机成本"]];
+  return map.filter(([k])=>c[k]).map(([k,label]) =>
+    `<div class="line"><span class="k">${label}：</span><span class="v">共¥${fmt2(c[k])}≈¥${fmt2(c[k]/area)}/亩</span></div>`).join("");
+}
+
+/* ================= 投入分析：环形图（参考平台截图样式） ================= */
+const CATS = { a:["农资","#f25a5a","#fdeaea"], l:["人工服务","#5cbf3a","#ecf8e3"], m:["农机服务","#ffab2e","#fff4e0"], o:["其他服务","#2fc6d4","#e2f7f9"] };
+function trimPct(x){ return String(+(x).toFixed(2)); }
+function donutSVG(items, total){
+  items = items.filter(([,v])=>v>0); // 零值分类不参与扇区与标签
+  const W=460,H=280,cx=230,cy=140,R=80,r=50;
+  const P=(rad,t)=>[cx+rad*Math.sin(t), cy-rad*Math.cos(t)];
+  let paths="", metas=[];
+  if(items.length===1){
+    const [k,v]=items[0];
+    paths=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${CATS[k][1]}"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff"/>`;
+    metas=[{k, v, mid:0}];
+  } else {
+    let ang=0;
+    items.forEach(([k,v])=>{
+      const a0=ang, a1=ang + v/total*2*Math.PI; ang=a1;
+      const large=(a1-a0)>Math.PI?1:0;
+      const [x0,y0]=P(R,a0),[x1,y1]=P(R,a1),[x2,y2]=P(r,a1),[x3,y3]=P(r,a0);
+      paths+=`<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 ${large} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)} A${r} ${r} 0 ${large} 0 ${x3.toFixed(1)} ${y3.toFixed(1)} Z" fill="${CATS[k][1]}" stroke="#fff" stroke-width="1.5"/>`;
+      metas.push({k, v, mid:(a0+a1)/2});
+    });
+  }
+  // 外部标签：按左右两侧分配，自上而下排布并防重叠
+  ["l","r"].forEach(side=>{
+    const arr = metas.filter(m=>(Math.sin(m.mid)>=0?"r":"l")===side)
+      .sort((a,b)=>(cy-(R+30)*Math.cos(a.mid))-(cy-(R+30)*Math.cos(b.mid)));
+    let y=22;
+    arr.forEach(m=>{ m.ly=Math.max(y, Math.min(cy-(R+30)*Math.cos(m.mid)-8, H-46)); y=m.ly+42; });
+  });
+  let labels="";
+  metas.forEach(m=>{
+    const side = Math.sin(m.mid)>=0 ? "r":"l";
+    const [dx,dy]=P(R+5,m.mid), [ex,ey]=P(R+24,m.mid);
+    const ly=m.ly, lcy=ly+10, tx = side==="r" ? 334 : 126;
+    labels+=`<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="3" fill="${CATS[m.k][1]}"/>
+      <polyline points="${dx.toFixed(1)},${dy.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)} ${side==="r"?tx-8:tx+8},${lcy}" fill="none" stroke="${CATS[m.k][1]}" stroke-width="1"/>
+      <text x="${tx}" y="${ly+10}" text-anchor="${side==="r"?"start":"end"}" font-size="12.5" fill="#555">${CATS[m.k][0]} ${fmt2(m.v)}元</text>
+      <text x="${tx}" y="${ly+27}" text-anchor="${side==="r"?"start":"end"}" font-size="12" fill="#888">${trimPct(m.v/total*100)}%</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;display:block;margin:0 auto">
+    ${paths}
+    <text x="${cx}" y="${cy-2}" text-anchor="middle" font-size="17" font-weight="700" fill="#ff6a2b">¥${fmt2(total)}</text>
+    <text x="${cx}" y="${cy+18}" text-anchor="middle" font-size="12" fill="#999">共 计</text>
+    ${labels}</svg>`;
+}
+
+/* ================= 汇总卡片 ================= */
+function renderStats(){
+  const totalArea = archives.reduce((s,a)=>s+a.area,0);
+  const totalCost = archives.reduce((s,a)=>s+archTotal(a),0);
+  const crops = new Set(archives.map(a=>a.crop));
+  const plots = new Set(archives.map(a=>a.plot));
+  const perMu = totalCost/totalArea;
+  document.getElementById("statCards").innerHTML = `
+    <div class="stat-card"><div class="label">已归档种植批次</div><div class="value blue">${archives.length} <span style="font-size:13px;color:#999;font-weight:400">个</span></div></div>
+    <div class="stat-card"><div class="label">归档总面积</div><div class="value green">${fmt(totalArea)} <span style="font-size:13px;color:#999;font-weight:400">亩</span></div></div>
+    <div class="stat-card"><div class="label">涉及作物</div><div class="value orange">${crops.size} <span style="font-size:13px;color:#999;font-weight:400">种</span></div></div>
+    <div class="stat-card"><div class="label">覆盖地块</div><div class="value blue">${plots.size} <span style="font-size:13px;color:#999;font-weight:400">块</span></div></div>
+    <div class="stat-card"><div class="label">归档总投入成本</div><div class="value green">¥ ${fmt2(totalCost)}</div></div>
+    <div class="stat-card"><div class="label">综合亩均成本</div><div class="value orange">¥ ${fmt2(perMu)}/亩</div></div>`;
+}
+
+/* ================= 筛选下拉初始化 ================= */
+function initFilters(){
+  const crops = [...new Set(archives.map(a=>a.crop))];
+  const plots = [...new Set(archives.map(a=>a.plot))];
+  const years = [...new Set(archives.map(a=>a.code.slice(4,8)))].sort();
+  document.getElementById("fCrop").innerHTML += crops.map(c=>`<option>${c}</option>`).join("");
+  document.getElementById("fPlot").innerHTML += plots.map(p=>`<option>${p}</option>`).join("");
+  document.getElementById("fYear").innerHTML += years.map(y=>`<option>${y}</option>`).join("");
+}
+function resetFilter(){
+  ["fCrop","fPlot","fYear"].forEach(id=>document.getElementById(id).value="");
+  renderTable();
+}
+
+/* ================= 档案列表 ================= */
+function filtered(){
+  const c=document.getElementById("fCrop").value, p=document.getElementById("fPlot").value,
+        y=document.getElementById("fYear").value, k=null;
+  return archives.filter(a =>
+       (!c || a.crop===c)
+    && (!p || a.plot===p)
+    && (!y || a.code.includes("ZDA-"+y))
+    && (!k || (a.plan+a.variety+a.code+a.plot).includes(k)));
+}
+function renderTable(){
+  const list = filtered();
+  const tb = document.getElementById("tbody");
+  tb.innerHTML = list.length ? list.map(a=>{
+    const total = archTotal(a), done = doneCount(a), d = days(a);
+    return `
+    <tr>
+      <td><span class="code-link" onclick="openArchive(${a.id})">${a.code}</span></td>
+      <td>${plotShape(a)}${a.plot}</td>
+	  <td>${cropTag(a.crop)}-${a.variety}</td>
+      <td>${a.plan}</td>
+      <td>${fmt(a.area)}</td>
+      <td>${a.startDate}</td>
+      <td>${a.endDate}</td>
+      <td>${d} 天</td>
+      <td><span class="tag ${done===a.stages.length?'tag-done':''}" style="${done===a.stages.length?'':'background:#fdeaea;color:#d64545'}">${done}/${a.stages.length}</span></td>
+      <td style="font-weight:600;color:#00a870">¥ ${fmt2(total)}</td>
+      <td style="font-weight:600;color:#ff8f1f">¥ ${fmt2(total/a.area)}</td>
+      <td style="white-space:nowrap">
+        <span class="op-link" onclick="openArchive(${a.id}, 'plan')">农艺方案</span>
+        <span class="op-link" onclick="openArchive(${a.id}, 'ana')">投入分析</span>
+      </td>
+    </tr>`;}).join("")
+    : `<tr><td colspan="12" style="text-align:center;color:#999;padding:40px">暂无归档数据</td></tr>`;
+  document.getElementById("pagerInfo").textContent = `共1页/${list.length}条`;
+  renderStats();
+}
+
+/* ================= 档案详情抽屉 ================= */
+let curArch = null, curTab = "plan";
+function openArchive(id, tab){
+  curArch = archives.find(x=>x.id===id);
+  curTab = tab || "plan";
+  const a = curArch, total = archTotal(a);
+  document.getElementById("dTitle").textContent = `种植档案 ${a.code}`;
+  document.getElementById("dSub").textContent = `种植结束自动归档 ｜ 经手人 ${a.operator}`;
+  renderDrawerBody();
+  show("mask"); document.getElementById("drawer").classList.add("open");
+}
+function switchTab(t){ curTab = t; renderDrawerBody(); }
+function renderDrawerBody(){
+  const a = curArch, total = archTotal(a), done = doneCount(a), d = days(a);
+  const head = `
+    <div class="arch-head">
+      <h2>${a.plot}<span class="area">(${fmt(a.area)}亩)</span></h2>
+      <div class="row"><b>${a.crop}-${a.variety}</b></div>
+      <div class="row"><span class="lbl">种植日期：</span>${a.startDate}</div>
+      <div class="row"><span class="lbl">种植方案：</span>${a.plan}</div>
+      <div class="row"><span class="lbl">位置：</span>${a.addr}</div>
+      <div class="row"><span class="lbl">结束时间：</span>${a.endDate} <span style="color:#bbb">（生长周期 ${d} 天，经手人 ${a.operator}）</span></div>
+    </div>
+    <div class="arch-tabs">
+      <div class="arch-tab ${curTab==='plan'?'active':''}" onclick="switchTab('plan')">农艺方案</div>
+      <div class="arch-tab ${curTab==='ana'?'active':''}" onclick="switchTab('ana')">投入分析</div>
+    </div>`;
+  let panel = "";
+  if(curTab === "plan"){
+    panel = `
+      <div class="progress-line">
+        <span class="txt">农事完成度</span>
+        <div class="bar"><i style="width:${(done/a.stages.length*100).toFixed(0)}%"></i></div>
+        <span class="txt"><b style="color:#00a870">${done}</b>/${a.stages.length} 环节完成</span>
+      </div>
+      ${a.stages.map(st=>{
+        const t = stageTotal(st), isDone = st.status==="done";
+        return `
+        <div class="stage ${isDone?'':'todo'}" onclick="openStage(${a.id},'${st.code}')" title="点击查看农事详情">
+          <div class="stage-top">
+            <span class="badge ${isDone?'done':'todo'}">${isDone?'已完成':'未完成'}</span>
+            <span class="stage-name">${st.name}</span>
+            <span class="stage-date">${st.date}</span>
+          </div>
+          <div class="stage-costs">
+            ${isDone ? catLines(st, a.area) : `<div class="line"><span class="k">该环节未执行，无成本发生。</span></div>`}
+            <div class="sum"><span>小计：</span><span>共¥${fmt2(t)}${isDone?`<span class="per">≈¥${fmt2(t/a.area)}/亩</span>`:''}</span></div>
+          </div>
+        </div>`;}).join("")}
+      <div style="color:#999;font-size:12px;text-align:center;margin-top:4px">点击环节卡片可查看农事详情（编号、审核状态、处理地块、描述、图片、成本）</div>`;
+  } else {
+    const catSum = Object.keys(CATS).map(k=>[k, a.stages.reduce((s,st)=>s+((st.costs||{})[k]||0),0)]).sort((x,y)=>y[1]-x[1]);
+    const stageSums = a.stages.map(st=>({name:st.name, v:stageTotal(st), status:st.status})).sort((x,y)=>y.v-x.v);
+    const maxStage = Math.max(...stageSums.map(x=>x.v), 1);
+    panel = `
+      <div class="ana-card">
+        <div class="ana-headline">当前投入共计：<span class="money">¥${fmt2(total)}</span><span class="per">≈¥${fmt2(total/a.area)}/亩</span></div>
+        ${total>0 ? donutSVG(catSum,total) : `<div style="color:#999;padding:24px;text-align:center">该档案暂无投入成本数据</div>`}
+        <div class="legend">${Object.keys(CATS).map(k=>`<span class="lg"><i style="background:${CATS[k][1]}"></i>${CATS[k][0]}</span>`).join("")}</div>
+        <table class="cat-table">
+          <thead><tr><th>分项</th><th>总计/元</th><th>亩均/元</th><th>占比/%</th></tr></thead>
+          <tbody>
+            ${catSum.filter(([,v])=>v>0).map(([k,v])=>`
+              <tr>
+                <td><span class="cat-chip" style="background:${CATS[k][2]};color:${CATS[k][1]}">${CATS[k][0]}</span></td>
+                <td>${fmt2(v)}</td>
+                <td>${fmt2(v/a.area)}</td>
+                <td>${total?trimPct(v/total*100):0}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+      <div class="ana-card">
+        <h4>按农事环节</h4>
+        ${stageSums.map(x=>`
+          <div class="bar-row">
+            <span class="bl">${x.name}</span>
+            <div class="btrack"><i style="width:${(x.v/maxStage*100).toFixed(1)}%;background:${x.status==='done'?'#00a870':'#dcdfe6'}"></i></div>
+            <span class="bv">¥ ${fmt2(x.v)}（占 ${total?trimPct(x.v/total*100):0}%）${x.status==='todo'?'<span style="color:#f56c6c">未执行</span>':''}</span>
+          </div>`).join("")}
+      </div>`;
+  }
+  document.getElementById("drawerBody").innerHTML = head + `<div class="tab-panel active">${panel}</div>`;
+}
+function closeDrawer(){
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("mask").style.display="none";
+}
+
+/* ================= 农事详情弹窗 ================= */
+function openStage(archId, stageCode){
+  const a = archives.find(x=>x.id===archId);
+  const st = a.stages.find(x=>x.code===stageCode);
+  const t = stageTotal(st);
+  document.getElementById("stageBody").innerHTML = `
+    <div class="d-row"><div class="dl">当前状态：</div><div class="dv ${st.status==='done'?'':''}"><span class="ok">${st.approve}</span></div></div>
+    <div class="d-row"><div class="dl">农事编号：</div><div class="dv">${st.code}</div></div>
+    <div class="d-row"><div class="dl">方案来源：</div><div class="dv">${a.plan}</div></div>
+    <div class="d-row"><div class="dl">农事类型：</div><div class="dv">${st.name}</div></div>
+    <div class="d-row"><div class="dl">农事时间：</div><div class="dv">${st.date}</div></div>
+    <div class="d-row"><div class="dl">处理地块：</div><div class="dv">共1个地块，${fmt(a.area)}亩<br><span class="chip">${a.plot}</span></div></div>
+    <div class="d-row"><div class="dl">农事描述：</div><div class="dv">${st.desc||"—"}</div></div>
+    <div class="d-row"><div class="dl">图片：</div><div class="dv"><span class="img-ph">IMG</span><span class="img-ph">IMG</span></div></div>
+    <div class="d-row"><div class="dl">所用成本：</div><div class="dv">${st.status==='done'?`共¥${fmt2(t)}≈¥${fmt2(t/a.area)}/亩`:"未执行，无成本"}</div></div>`;
+  show("stageModal");
+}
+
+initFilters();
+renderTable();
+</script>
+</body>
+</html>
